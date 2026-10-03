@@ -21,7 +21,7 @@ const CHROME_SEL = '.review-banner,.review-sidebar,.review-modal-overlay,.review
 
 function pageSlug(){let p=window.location.pathname.replace(/\/index\.html?$/,'');if(p===''||p==='/')return 'home';return p.replace(/^\/|\/$/g,'').replace(/\//g,'-')||'home';}
 const SLUG = pageSlug();
-function reviewer(){let n=store.get('ttrd_reviewer');if(!n){n=(window.prompt(L.namePrompt,'')||'Anonymous').trim()||'Anonymous';store.set('ttrd_reviewer',n);}return n;}
+function reviewer(){let n=store.get('ttrd_reviewer');if(!n){let p;try{p=window.prompt(L.namePrompt,'')}catch(e){return 'Anonymous'}n=(p||'Anonymous').trim()||'Anonymous';store.set('ttrd_reviewer',n);}return n;}
 
 /* status normalize (reader shim for legacy boolean records) */
 function statusOf(c){ const s=c.status; if(s==='resolved'||s==='applied'||s==='archived'||c.archived||c.applied)return 'resolved'; return 'pending'; }
