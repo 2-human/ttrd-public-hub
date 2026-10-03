@@ -1,6 +1,6 @@
 /* Voyager journeys prototype — renders window.JOURNEY_DATA (built by
  * tools/journey-prototype/build.py). Left: navigation. Main: the journey as a
- * stream of builder steps. Right: the selected step's setup, as Voyager's
+ * map of builder steps, like Voyager's canvas. Right: the selected step's setup, as Voyager's
  * config panel would show it. Read-only: nothing here talks to Voyager. */
 (function () {
   'use strict';
@@ -160,45 +160,256 @@
     h += '<div class="chips" data-comment-id="j-' + j.id + '-segment">' + j.segment.map(function (s) { return '<span class="chip seg"><b>' + esc(s.field) + ':</b> ' + esc(s.value) + '</span>'; }).join('') + '</div>';
     h += '<div class="chips" data-comment-id="j-' + j.id + '-settings">' + j.settings.map(function (s) { return '<span class="chip"><b>' + esc(s.setting) + ':</b> ' + esc(s.value.replace(/\*\*/g, '')) + '</span>'; }).join('') + '</div>';
     h += '<div class="tabs"><button data-tab="flow"' + (state.tab === 'flow' ? ' class="on"' : '') + '>Flow</button><button data-tab="emails"' + (state.tab === 'emails' ? ' class="on"' : '') + '>Emails (' + sends.length + ')</button><button data-tab="about"' + (state.tab === 'about' ? ' class="on"' : '') + '>About this journey</button></div>';
-    if (state.tab === 'flow') { h += flowHtml(j); }
+    if (state.tab === 'flow') { h += mapHtml(j); }
     else if (state.tab === 'emails') { h += emailsHtml(j, sends); }
     else { h += '<div class="prose" id="pv">' + (j.segmentNoteHtml ? '<h3>Segment</h3>' + j.segmentNoteHtml : '') + j.about.map(function (a) { return '<h3>' + esc(a.title) + '</h3>' + a.html; }).join('') + '</div>'; }
     $('#main').innerHTML = h;
+    $('#main').classList.toggle('wide', state.tab === 'flow');
+    if (state.tab === 'flow') { layoutMap(j); }
     if (state.tab === 'about') { tagProse($('#pv'), 'j-' + j.id + '-about'); }
     refreshReview();
   }
 
-  function flowHtml(j) {
-    var inc = incomingMap(j);
+  /* ---- journey map ----
+   * Drawn the way Voyager's builder canvas draws a journey: 168px step cards
+   * with an input port on top, output ports below (Y/N for Branch and Wait-for,
+   * A/B for the split), curved grey connectors, a dotted canvas. Voyager keeps
+   * a hand-placed x/y per step; the build sheets have none, so the map is laid
+   * out here: steps sit on rows by their longest path from the trigger,
+   * connectors that skip rows run down thin lanes, and rows are reordered to
+   * cut crossings. */
+  var MAP = { w: 168, lane: 16, gapX: 36, gapY: 70, pad: 48, zoom: null };
+  var PORT_X = { out: 0.5, Y: 0.28, N: 0.72, A: 0.28, B: 0.72 };
+  function outPorts(s) {
+    if (s.type === 'Exit') { return []; }
+    if (s.type === 'Branch' || s.type === 'Wait for') { return ['Y', 'N']; }
+    if (s.type === 'A/B split') { return ['A', 'B']; }
+    return ['out'];
+  }
+
+  function mapHtml(j) {
     var legend = Object.keys(TYPES).filter(function (k) { return k !== 'Wait for'; }).map(function (k) {
-      var t = TYPES[k]; return '<span><i style="background:var(--' + t.k + ')">' + t.icon + '</i>' + t.label + '</span>';
+      var t = TYPES[k]; return '<span><i style="color:var(--' + t.k + ')">' + t.icon + '</i>' + t.label + '</span>';
     }).join('');
-    var h = '<div class="flowbar"><span>Click a step to open its setup. Outputs jump to their target.</span><span class="legend">' + legend + '</span></div>';
-    var cur = null;
-    j.steps.forEach(function (s, i) {
-      if (s.section !== cur) {
-        if (cur !== null) { h += '</div></div>'; }
-        cur = s.section;
-        h += '<div class="sec"><h2>' + esc(s.section || 'Steps') + '</h2><div class="stream">';
-      }
+    var h = '<div class="flowbar"><span>Drag to move around · ' + (/Mac/.test(navigator.platform) ? '⌘' : 'Ctrl') + ' + scroll to zoom · click a step for its setup, a connector or port to jump to its target.</span><span class="legend">' + legend + '</span></div>';
+    h += '<div class="cwrap"><div class="zoomctl" data-review-skip><button data-zoom="-1" title="Zoom out">−</button><button data-zoom="0" title="Fit the whole journey">Fit</button><button data-zoom="1" title="Zoom in">+</button></div>' +
+      '<div class="canvas" id="cv"><div class="sizer" id="cvs"><div class="stage" id="stage"><svg class="edges" id="edges" aria-hidden="true"></svg>';
+    j.steps.forEach(function (s) {
       var t = TYPES[s.type] || TYPES.Exit;
-      var nextId = j.steps[i + 1] ? j.steps[i + 1].id : null;
-      var prevId = j.steps[i - 1] ? j.steps[i - 1].id : null;
-      var froms = (inc[s.id] || []).filter(function (f) { return f.from !== prevId; });
-      var outs = s.next.map(function (o) {
-        var isNext = o.to === nextId && o.port === 'out';
-        return '<span class="out' + (isNext ? ' next' : '') + '" data-go="' + esc(o.to) + '"><span class="p ' + esc(o.port) + '">' + (o.port === 'out' ? '→' : esc(o.port)) + '</span>' + esc(o.to) + '</span>';
-      }).join('');
-      var rem = s.type === 'Send' ? (s.config.description ? esc(s.config.description) : '') + (s.config.remark ? ' — ' + esc(s.config.remark) : '') : (s.config.conditions || []).map(function (c) { return c.note; }).filter(Boolean).map(esc).join(' · ');
-      h += '<div class="node t-' + t.k + (state.step === s.id ? ' sel' : '') + '" id="n-' + esc(s.id) + '" data-step="' + esc(s.id) + '" data-comment-id="j-' + esc(j.id) + '-' + esc(s.id) + '">' +
-        '<div class="ic">' + t.icon + '</div><div>' +
-        '<div class="hd"><span class="id">' + esc(s.id) + '</span><span class="ty">' + (s.type === 'Wait for' ? 'Wait for a condition' : t.label) + '</span>' +
-        (froms.length ? '<span class="from">from ' + froms.map(function (f) { return esc(f.from) + (f.port !== 'out' ? ' (' + esc(f.port) + ')' : ''); }).join(', ') + '</span>' : '') + '</div>' +
-        '<div class="sum">' + summary(s) + '</div>' + (rem ? '<div class="rem">' + rem + '</div>' : '') +
-        (outs ? '<div class="outs">' + outs + '</div>' : '') + '</div></div>';
+      var to = {};
+      s.next.forEach(function (o) { to[o.port] = o.to; });
+      var ports = s.type === 'Trigger' ? '' : '<span class="port in"></span>';
+      outPorts(s).forEach(function (p) {
+        ports += '<span class="port o p-' + p + '"' + (to[p] ? ' data-go="' + esc(to[p]) + '" title="' + (p === 'out' ? 'Next' : p) + ' → ' + esc(to[p]) + '"' : ' title="Not connected"') + '>' + (p === 'out' ? '' : p) + '</span>';
+      });
+      h += '<div class="node t-' + t.k + (state.step === s.id ? ' sel' : '') + '" id="n-' + esc(s.id) + '" data-step="' + esc(s.id) + '" data-comment-id="j-' + esc(j.id) + '-' + esc(s.id) + '"' + (s.section ? ' title="' + esc(s.section) + '"' : '') + '>' +
+        ports + '<div class="nh"><span class="ic">' + t.icon + '</span>' + t.label + '<span class="sid">' + esc(s.id) + '</span></div>' +
+        '<div class="nb">' + summary(s) + '</div></div>';
     });
-    if (cur !== null) { h += '</div></div>'; }
-    return h;
+    return h + '</div></div></div></div>';
+  }
+
+  // Weighted isotonic regression (pool adjacent violators): the x positions
+  // closest to `want` that keep each item at least sep[i] right of the last.
+  function packRow(want, sep) {
+    var c = [0];
+    for (var i = 1; i < want.length; i++) { c[i] = c[i - 1] + sep[i - 1]; }
+    var blocks = [];
+    want.forEach(function (d, i) {
+      blocks.push({ sum: d - c[i], n: 1 });
+      while (blocks.length > 1 && blocks[blocks.length - 2].sum / blocks[blocks.length - 2].n > blocks[blocks.length - 1].sum / blocks[blocks.length - 1].n) {
+        var b = blocks.pop(); blocks[blocks.length - 1].sum += b.sum; blocks[blocks.length - 1].n += b.n;
+      }
+    });
+    var out = [];
+    blocks.forEach(function (b) { for (var k = 0; k < b.n; k++) { out.push(b.sum / b.n + c[out.length]); } });
+    return out;
+  }
+
+  function layoutMap(j) {
+    var stage = $('#stage'); if (!stage) { return; }
+    var V = {}, order = [];
+    j.steps.forEach(function (s, i) { V[s.id] = { id: s.id, real: true, idx: i, w: MAP.w, ins: [], outs: [] }; order.push(s.id); });
+    var edges = [];
+    j.steps.forEach(function (s) { s.next.forEach(function (o) { if (V[o.to]) { edges.push({ from: s.id, to: o.to, port: o.port }); } }); });
+    // Loops are possible in Voyager; set them aside so the rows stay acyclic.
+    var mark = {};
+    function dfs(u) {
+      mark[u] = 1;
+      edges.forEach(function (e) { if (e.from === u) { if (mark[e.to] === 1) { e.back = true; } else if (!mark[e.to]) { dfs(e.to); } } });
+      mark[u] = 2;
+    }
+    order.forEach(function (id) { if (!mark[id]) { dfs(id); } });
+    var fwd = edges.filter(function (e) { return !e.back; });
+    var row = {};
+    function rowOf(v) {
+      if (row[v] != null) { return row[v]; }
+      var r = 0;
+      fwd.forEach(function (e) { if (e.to === v) { r = Math.max(r, rowOf(e.from) + 1); } });
+      return (row[v] = r);
+    }
+    order.forEach(rowOf);
+    // Connectors that skip rows get a lane point on every row they cross.
+    var segs = [];
+    fwd.forEach(function (e, k) {
+      var prev = e.from, frac = PORT_X[e.port] || 0.5;
+      e.lanes = [];
+      for (var r = row[e.from] + 1; r < row[e.to]; r++) {
+        var d = 'L' + k + '_' + r;
+        V[d] = { id: d, real: false, idx: V[e.from].idx + 0.5, w: 0, ins: [], outs: [] }; row[d] = r; e.lanes.push(d);
+        segs.push({ u: prev, v: d, f: frac }); prev = d; frac = 0.5;
+      }
+      segs.push({ u: prev, v: e.to, f: frac });
+    });
+    segs.forEach(function (sg) { V[sg.u].outs.push(sg); V[sg.v].ins.push(sg); });
+    var rows = [];
+    Object.keys(V).forEach(function (id) { (rows[row[id]] = rows[row[id]] || []).push(id); });
+    rows = rows.map(function (r) { return (r || []).sort(function (a, b) { return V[a].idx - V[b].idx; }); });
+    // Order within rows: barycentre sweeps, keeping the order with fewest crossings.
+    function posIn(r) { var m = {}; r.forEach(function (id, i) { m[id] = i; }); return m; }
+    function crossings(rs) {
+      var n = 0;
+      for (var i = 0; i + 1 < rs.length; i++) {
+        var pu = posIn(rs[i]), pv = posIn(rs[i + 1]), list = [];
+        rs[i].forEach(function (u) { V[u].outs.forEach(function (sg) { if (pv[sg.v] != null) { list.push([pu[u] + sg.f, pv[sg.v]]); } }); });
+        for (var a = 0; a < list.length; a++) { for (var b = a + 1; b < list.length; b++) { if ((list[a][0] - list[b][0]) * (list[a][1] - list[b][1]) < 0) { n++; } } }
+      }
+      return n;
+    }
+    var best = rows.map(function (r) { return r.slice(); }), bestN = crossings(rows);
+    for (var it = 0; it < 12; it++) {
+      var down = it % 2 === 0;
+      for (var ri = down ? 1 : rows.length - 2; down ? ri < rows.length : ri >= 0; ri += down ? 1 : -1) {
+        var ref = posIn(rows[down ? ri - 1 : ri + 1]), cur = posIn(rows[ri]);
+        var key = {};
+        rows[ri].forEach(function (id) {
+          var nb = down ? V[id].ins.map(function (sg) { return ref[sg.u] != null ? ref[sg.u] + (sg.f - 0.5) : null; })
+                        : V[id].outs.map(function (sg) { return ref[sg.v] != null ? ref[sg.v] - (sg.f - 0.5) : null; });
+          nb = nb.filter(function (x) { return x != null; });
+          key[id] = nb.length ? nb.reduce(function (a, b) { return a + b; }, 0) / nb.length : cur[id];
+        });
+        rows[ri].sort(function (a, b) { return key[a] - key[b] || cur[a] - cur[b]; });
+      }
+      var n = crossings(rows);
+      if (n < bestN) { bestN = n; best = rows.map(function (r) { return r.slice(); }); }
+    }
+    rows = best;
+    // x: each step pulled toward the ports it connects to, rows kept apart.
+    var X = {};
+    function gap(a, b) { return (V[a].w + V[b].w) / 2 + (V[a].real && V[b].real ? MAP.gapX : V[a].real || V[b].real ? MAP.lane * 1.5 : MAP.lane); }
+    rows.forEach(function (r) { var x = 0; r.forEach(function (id, i) { if (i) { x += gap(r[i - 1], id); } X[id] = x; }); });
+    function portX(id, f) { return X[id] + (f - 0.5) * V[id].w; }
+    for (var pass = 0; pass < 16; pass++) {
+      var mode = pass === 15 ? 'both' : pass % 2 ? 'up' : 'down';
+      var seq = rows.map(function (r, i) { return i; });
+      if (mode === 'up') { seq.reverse(); }
+      seq.forEach(function (ri) {
+        var r = rows[ri];
+        var want = r.map(function (id) {
+          var pts = [];
+          if (mode !== 'up') { V[id].ins.forEach(function (sg) { pts.push(portX(sg.u, sg.f)); }); }
+          if (mode !== 'down') { V[id].outs.forEach(function (sg) { pts.push(X[sg.v] - (sg.f - 0.5) * V[id].w); }); }
+          return pts.length ? pts.reduce(function (a, b) { return a + b; }, 0) / pts.length : X[id];
+        });
+        var sep = r.slice(1).map(function (id, i) { return gap(r[i], id); });
+        packRow(want, sep).forEach(function (x, i) { X[r[i]] = x; });
+      });
+    }
+    // y: rows stacked by the tallest card in each.
+    var H = {};
+    order.forEach(function (id) { H[id] = document.getElementById('n-' + id).offsetHeight; });
+    var top = [], rowH = [], y = MAP.pad;
+    rows.forEach(function (r, ri) {
+      rowH[ri] = Math.max.apply(null, [24].concat(r.filter(function (id) { return V[id].real; }).map(function (id) { return H[id]; })));
+      top[ri] = y; y += rowH[ri] + MAP.gapY;
+    });
+    var minX = Infinity, maxX = -Infinity;
+    Object.keys(X).forEach(function (id) { minX = Math.min(minX, X[id] - V[id].w / 2); maxX = Math.max(maxX, X[id] + V[id].w / 2); });
+    var shift = MAP.pad - minX;
+    Object.keys(X).forEach(function (id) { X[id] += shift; });
+    order.forEach(function (id) {
+      var el = document.getElementById('n-' + id);
+      el.style.left = (X[id] - MAP.w / 2) + 'px'; el.style.top = top[row[id]] + 'px';
+    });
+    var W = maxX - minX + 2 * MAP.pad, Ht = y - MAP.gapY + MAP.pad;
+    // Connectors: Voyager's vertical S-curve between rows, straight down a lane.
+    function curve(a, b) { var dy = Math.max(26, Math.abs(b.y - a.y) / 2); return ' C' + a.x + ',' + (a.y + dy) + ' ' + b.x + ',' + (b.y - dy) + ' ' + b.x + ',' + b.y; }
+    var svg = '';
+    edges.forEach(function (e) {
+      var f = PORT_X[e.port] || 0.5;
+      var a = { x: portX(e.from, f), y: top[row[e.from]] + H[e.from] };
+      var b = { x: X[e.to], y: top[row[e.to]] };
+      var d = 'M' + a.x + ',' + a.y;
+      if (e.back) {
+        var side = Math.max(X[e.from], X[e.to]) + MAP.w / 2 + 30;
+        d += ' C' + a.x + ',' + (a.y + 50) + ' ' + side + ',' + (a.y + 50) + ' ' + side + ',' + ((a.y + b.y) / 2) + ' S' + b.x + ',' + (b.y - 50) + ' ' + b.x + ',' + b.y;
+      } else {
+        var p = a;
+        e.lanes.forEach(function (l) {
+          var q = { x: X[l], y: top[row[l]] };
+          d += curve(p, q) + ' L' + q.x + ',' + (q.y + rowH[row[l]]);
+          p = { x: q.x, y: q.y + rowH[row[l]] };
+        });
+        d += curve(p, b);
+      }
+      svg += '<path d="' + d + '" class="e p-' + esc(e.port) + (e.back ? ' back' : '') + '" data-from="' + esc(e.from) + '" data-to="' + esc(e.to) + '" data-go="' + esc(e.to) + '"><title>' + esc(e.from) + (e.port === 'out' ? '' : ' ' + esc(e.port)) + ' → ' + esc(e.to) + '</title></path>';
+    });
+    var edgesEl = $('#edges');
+    edgesEl.setAttribute('width', W); edgesEl.setAttribute('height', Ht); edgesEl.innerHTML = svg;
+    stage.style.width = W + 'px'; stage.style.height = Ht + 'px';
+    stage.dataset.w = W; stage.dataset.h = Ht;
+    var cv = $('#cv');
+    // Open at a readable size (the whole width if it fits at 75% or more), on the trigger.
+    MAP.zoom = null;
+    setZoom(Math.max(0.75, Math.min(1, (cv.clientWidth - 24) / W)));
+    cv.scrollTop = 0; cv.scrollLeft = Math.max(0, X[order[0]] * MAP.zoom - cv.clientWidth / 2);
+    wireCanvas(cv);
+    hiEdges();
+  }
+  function fitZoom() {
+    var cv = $('#cv'), st = $('#stage');
+    if (!cv || !st) { return 1; }
+    return Math.max(0.35, Math.min(1, (cv.clientWidth - 24) / +st.dataset.w, (cv.clientHeight - 24) / +st.dataset.h));
+  }
+  function setZoom(z, cx, cy) {
+    var cv = $('#cv'), st = $('#stage'), sz = $('#cvs');
+    if (!cv || !st) { return; }
+    z = Math.max(0.3, Math.min(1.6, z));
+    var old = MAP.zoom || z;
+    if (cx == null) { cx = cv.clientWidth / 2; cy = cv.clientHeight / 2; }
+    var wx = (cv.scrollLeft + cx) / old, wy = (cv.scrollTop + cy) / old;
+    MAP.zoom = z;
+    st.style.transform = 'scale(' + z + ')';
+    sz.style.width = (+st.dataset.w * z) + 'px'; sz.style.height = (+st.dataset.h * z) + 'px';
+    cv.scrollLeft = wx * z - cx; cv.scrollTop = wy * z - cy;
+  }
+  function wireCanvas(cv) {
+    var drag = null;
+    cv.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0 || e.target.closest('.node,.zoomctl,path')) { return; }
+      drag = { x: e.clientX, y: e.clientY, l: cv.scrollLeft, t: cv.scrollTop };
+      cv.classList.add('panning'); cv.setPointerCapture(e.pointerId);
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!drag) { return; }
+      cv.scrollLeft = drag.l - (e.clientX - drag.x); cv.scrollTop = drag.t - (e.clientY - drag.y);
+    });
+    var stop = function () { drag = null; cv.classList.remove('panning'); };
+    cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+    cv.addEventListener('wheel', function (e) {
+      if (!(e.ctrlKey || e.metaKey)) { return; }
+      e.preventDefault();
+      var r = cv.getBoundingClientRect();
+      setZoom(MAP.zoom * Math.exp(-e.deltaY * 0.002), e.clientX - r.left, e.clientY - r.top);
+    }, { passive: false });
+  }
+  // Connectors touching the selected (or hovered) step turn magenta.
+  function hiEdges(hover) {
+    Array.prototype.forEach.call(document.querySelectorAll('#edges path'), function (p) {
+      var f = p.getAttribute('data-from'), t = p.getAttribute('data-to');
+      p.classList.toggle('sel', !!state.step && (f === state.step || t === state.step));
+      p.classList.toggle('hov', !!hover && (f === hover || t === hover));
+    });
   }
 
   function emailsHtml(j, sends) {
@@ -338,8 +549,14 @@
       if (!sameScreen) { renderJourney(); window.scrollTo(0, 0); } else { markSelection(); }
       var j = byId[state.j];
       var s = state.step && j.steps.filter(function (x) { return x.id === state.step; })[0];
-      if (s) { openStep(j, s); reveal(s.id); } else { document.body.classList.remove('drawer-open'); }
+      if (s) {
+        // The drawer slides in over .2s and narrows the canvas; place the step after it settles.
+        var wasOpen = document.body.classList.contains('drawer-open');
+        openStep(j, s);
+        if (wasOpen) { reveal(s.id); } else { setTimeout(function () { reveal(s.id); }, 230); }
+      } else { document.body.classList.remove('drawer-open'); }
     } else {
+      $('#main').classList.remove('wide');
       if (!sameScreen) {
         if (state.view === 'sets') { renderSets(); } else if (state.view === 'builder') { renderBuilder(); } else { renderOverview(); }
         window.scrollTo(0, 0);
@@ -350,10 +567,27 @@
   function markSelection() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-step]'), function (el) { el.classList.toggle('sel', el.dataset.step === state.step); });
     Array.prototype.forEach.call(document.querySelectorAll('[data-email]'), function (el) { el.classList.toggle('sel', el.dataset.email === state.email); });
+    hiEdges();
   }
   function reveal(id) {
     var el = document.getElementById('n-' + id) || document.querySelector('.row[data-step="' + id + '"]');
     if (!el) { return; }
+    var cv = el.closest('.canvas');
+    if (cv) {
+      // Pan the canvas so the step sits in the middle of the part of it that is on screen.
+      var cr = cv.getBoundingClientRect(), nr = el.getBoundingClientRect();
+      var vt = Math.max(cr.top, 0), vb = Math.min(cr.bottom, window.innerHeight);
+      if (vb - vt < 200) { window.scrollTo({ top: window.pageYOffset + cr.top - 20 }); cr = cv.getBoundingClientRect(); nr = el.getBoundingClientRect(); vt = Math.max(cr.top, 0); vb = Math.min(cr.bottom, window.innerHeight); }
+      if (nr.left < cr.left + 10 || nr.right > cr.right - 10 || nr.top < vt + 10 || nr.bottom > vb - 10) {
+        var tl = Math.max(0, Math.min(cv.scrollWidth - cv.clientWidth, cv.scrollLeft + nr.left - cr.left - (cr.width - nr.width) / 2));
+        var tt = Math.max(0, Math.min(cv.scrollHeight - cv.clientHeight, cv.scrollTop + nr.top - (vt + vb - nr.height) / 2));
+        var top2 = nr.top - (tt - cv.scrollTop);
+        cv.scrollTo({ left: tl, top: tt, behavior: 'smooth' });
+        // At the ends of the map the canvas cannot pan far enough; scroll the page for the rest.
+        if (top2 + nr.height > window.innerHeight - 10 || top2 < 10) { window.scrollBy({ top: top2 - (window.innerHeight - nr.height) / 2, behavior: 'smooth' }); }
+      }
+      return;
+    }
     var r = el.getBoundingClientRect();
     if (r.top < 70 || r.bottom > window.innerHeight - 40) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
   }
@@ -369,8 +603,10 @@
     var a = t.closest('a[href^="#"]');
     if (a) { e.preventDefault(); nav(a.getAttribute('href')); return; }
     var goEl = t.closest('[data-go]');
-    if (goEl) { e.stopPropagation(); go(goEl.dataset.go); return; }
+    if (goEl) { e.stopPropagation(); go(goEl.getAttribute('data-go')); return; }
     if (t.closest('[data-close]')) { closeDrawer(); return; }
+    var zm = t.closest('[data-zoom]');
+    if (zm) { var dz = +zm.dataset.zoom; setZoom(dz ? MAP.zoom * (dz > 0 ? 1.25 : 0.8) : fitZoom()); return; }
     var mv = t.closest('[data-move]');
     if (mv) { move(+mv.dataset.move); return; }
     var tab = t.closest('[data-tab]');
@@ -381,9 +617,10 @@
     if (emEl) { nav('#sets/' + emEl.dataset.email); }
   });
   document.addEventListener('mouseover', function (e) {
-    var g = e.target.closest && e.target.closest('.node [data-go], .drawer [data-go]');
+    var g = e.target.closest && e.target.closest('.node [data-go], .drawer [data-go], #edges [data-go]');
     Array.prototype.forEach.call(document.querySelectorAll('.node.hl'), function (n) { n.classList.remove('hl'); });
-    if (g) { var n = document.getElementById('n-' + g.dataset.go); if (n) { n.classList.add('hl'); } }
+    if (g) { var n = document.getElementById('n-' + g.getAttribute('data-go')); if (n) { n.classList.add('hl'); } }
+    if (document.getElementById('edges')) { var nd = e.target.closest && e.target.closest('.node'); hiEdges(nd ? nd.dataset.step : null); }
   });
   function move(d) {
     var j = byId[state.j]; if (!j || !state.step) { return; }
