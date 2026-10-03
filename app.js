@@ -202,7 +202,7 @@
       outPorts(s).forEach(function (p) {
         ports += '<span class="port o p-' + p + '"' + (to[p] ? ' data-go="' + esc(to[p]) + '" title="' + (p === 'out' ? 'Next' : p) + ' → ' + esc(to[p]) + '"' : ' title="Not connected"') + '>' + (p === 'out' ? '' : p) + '</span>';
       });
-      h += '<div class="node t-' + t.k + (state.step === s.id ? ' sel' : '') + '" id="n-' + esc(s.id) + '" data-step="' + esc(s.id) + '" data-comment-id="j-' + esc(j.id) + '-' + esc(s.id) + '"' + (s.section ? ' title="' + esc(s.section) + '"' : '') + '>' +
+      h += '<div class="node t-' + t.k + (state.step === s.id ? ' sel' : '') + '" id="n-' + esc(s.id) + '" data-step="' + esc(s.id) + '" data-comment-id="j-' + esc(j.id) + '-' + esc(s.id) + '"' + ' title="' + esc((s.section ? s.section + ' — ' : '') + (s.purpose || '')) + '"' + '>' +
         ports + '<div class="nh"><span class="ic">' + t.icon + '</span>' + t.label + '<span class="sid">' + esc(s.id) + '</span></div>' +
         '<div class="nb">' + summary(s) + '</div></div>';
     });
@@ -460,7 +460,9 @@
     var idx = j.steps.indexOf(s);
     $('#dh').innerHTML = '<div class="ic" style="background:var(--' + t.k + ')">' + t.icon + '</div><div><div class="tt">' + esc(s.type === 'Wait for' ? 'Wait — for a condition' : t.label) + '</div><div class="st">' + esc(s.id) + ' · ' + esc(s.section || '') + ' · journey ' + esc(j.id) + '</div></div>' +
       '<div class="nav2" style="margin-left:auto"><button data-move="-1" title="Previous step (↑)"' + (idx < 1 ? ' disabled' : '') + '>↑</button><button data-move="1" title="Next step (↓)"' + (idx >= j.steps.length - 1 ? ' disabled' : '') + '>↓</button></div><button class="x" data-close title="Close (Esc)">✕</button>';
-    var c = s.config, h = '<div class="cfg" data-comment-id="d-' + esc(j.id) + '-' + esc(s.id) + '">';
+    var c = s.config, h = '';
+    if (s.purpose) { h += '<div class="purpose" data-comment-id="p-' + esc(j.id) + '-' + esc(s.id) + '"><span>What it’s for</span>' + esc(s.purpose) + '</div>'; }
+    h += '<div class="cfg" data-comment-id="d-' + esc(j.id) + '-' + esc(s.id) + '">';
     switch (s.type) {
       case 'Trigger':
         h += ctl('Source', 'CRM segment (automated)', true);
@@ -639,7 +641,7 @@
   // that holds the commented element, then hand the element back.
   function hashForAnchor(a) {
     var m;
-    if ((m = /^(?:j|d)-([A-G])-([A-G]\d+\w*)$/.exec(a))) { return '#j/' + m[1] + '/' + m[2]; }
+    if ((m = /^(?:j|d|p)-([A-G])-([A-G]\d+\w*)$/.exec(a))) { return '#j/' + m[1] + '/' + m[2]; }
     if ((m = /^j-([A-G])-(?:head|summary|segment|settings)$/.exec(a))) { return '#j/' + m[1]; }
     if ((m = /^j-([A-G])-about-/.exec(a))) { state.tab = 'about'; return '#j/' + m[1]; }
     if ((m = /^em-(S\d\d-E\w+)$/.exec(a))) {

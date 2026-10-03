@@ -57,6 +57,7 @@ window.JOURNEY_DATA = {
      "id": "A1",
      "type": "Trigger",
      "section": "Entry",
+     "purpose": "Starts the journey for every client who registered in the last 90 days and has not deposited.",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -72,6 +73,7 @@ window.JOURNEY_DATA = {
      "id": "A2",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Safety check before anything is sent: anyone the CRM marks as not to be contacted (do not contact, fraud, under age, duplicate, wrong details, closed, not interested) leaves here.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery · Not Interested",
       "match": "any",
@@ -142,6 +144,7 @@ window.JOURNEY_DATA = {
      "id": "A3",
      "type": "Wait",
      "section": "Entry",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -159,6 +162,7 @@ window.JOURNEY_DATA = {
      "id": "A4",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Sorts people on arrival: anyone already verified skips the verification emails and goes straight to the funding stage.",
      "config": {
       "raw": "verified is true",
       "match": "all",
@@ -187,6 +191,7 @@ window.JOURNEY_DATA = {
      "id": "A5",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Sorts unverified clients by age: those who registered this week get the full welcome sequence; older ones start at the shorter reminder (A20).",
      "config": {
       "raw": "registrationDate in last 7 days",
       "match": "all",
@@ -215,6 +220,7 @@ window.JOURNEY_DATA = {
      "id": "A6",
      "type": "Branch",
      "section": "Verification stage",
+     "purpose": "Checks whether the person signed up from a Meta ad, so their first email can follow on from the ad they clicked.",
      "config": {
       "raw": "tags contains `src-meta`",
       "match": "all",
@@ -243,6 +249,7 @@ window.JOURNEY_DATA = {
      "id": "A7",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "First email for Meta sign-ups: picks up the ad’s promise and shows that verifying the account is the next step.",
      "config": {
       "raw": "**S07-E1** (continue the ad’s promise)",
       "template": "S07-E1",
@@ -260,6 +267,7 @@ window.JOURNEY_DATA = {
      "id": "A8",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "First email for everyone else: welcome to TenTrade, and verify your identity next.",
      "config": {
       "raw": "**S01-E1** (welcome, verify next)",
       "template": "S01-E1",
@@ -277,6 +285,7 @@ window.JOURNEY_DATA = {
      "id": "A9",
      "type": "Wait for",
      "section": "Verification stage",
+     "purpose": "Gives them two days to verify. Verifying moves them straight to the funding stage; otherwise the next reminder follows.",
      "config": {
       "raw": "verified is true · give up after 2 days",
       "mode": "for",
@@ -308,6 +317,7 @@ window.JOURNEY_DATA = {
      "id": "A10",
      "type": "Branch",
      "section": "Verification stage",
+     "purpose": "Splits by interest: a click means they tried and may need practical help; no click means they need a reminder.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -336,6 +346,7 @@ window.JOURNEY_DATA = {
      "id": "A11",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "For clickers: practical tips for getting documents approved first time.",
      "config": {
       "raw": "**S01-E2a** (tips for approval)",
       "template": "S01-E2a",
@@ -353,6 +364,7 @@ window.JOURNEY_DATA = {
      "id": "A12",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "For non-clickers: a short reminder that the account still needs verifying.",
      "config": {
       "raw": "**S01-E2b** (still needs verifying)",
       "template": "S01-E2b",
@@ -370,6 +382,7 @@ window.JOURNEY_DATA = {
      "id": "A13",
      "type": "Wait for",
      "section": "Verification stage",
+     "purpose": "Four more days to verify; verifying moves them to the funding stage.",
      "config": {
       "raw": "verified is true · give up after 4 days",
       "mode": "for",
@@ -401,6 +414,7 @@ window.JOURNEY_DATA = {
      "id": "A14",
      "type": "Call task",
      "section": "Verification stage",
+     "purpose": "A week in and still unverified: asks the account manager to call and offer help with the documents.",
      "config": {
       "raw": "“Unverified after a week — offer help with documents”",
       "note": "Unverified after a week — offer help with documents"
@@ -416,6 +430,7 @@ window.JOURNEY_DATA = {
      "id": "A15",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "The same offer of help by email, for people the call does not reach.",
      "config": {
       "raw": "**S01-E3** (offer of help)",
       "template": "S01-E3",
@@ -433,6 +448,7 @@ window.JOURNEY_DATA = {
      "id": "A16",
      "type": "Wait for",
      "section": "Verification stage",
+     "purpose": "Ten more days to verify before deciding whether to keep emailing.",
      "config": {
       "raw": "verified is true · give up after 10 days",
       "mode": "for",
@@ -464,6 +480,7 @@ window.JOURNEY_DATA = {
      "id": "A17",
      "type": "Branch",
      "section": "Verification stage",
+     "purpose": "Keeps emailing only people who opened the last email. Non-openers go to the silent final wait (A28), so we stop sending to people who are not reading.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -492,6 +509,7 @@ window.JOURNEY_DATA = {
      "id": "A20",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "Reminder that they are one step from a ready account. Also the first email for unverified clients who were already 8 to 90 days in when they entered.",
      "config": {
       "raw": "**S02-E1** (one step from ready) — also the entry point for unverified clients registered 8–90 days ago",
       "template": "S02-E1",
@@ -509,6 +527,7 @@ window.JOURNEY_DATA = {
      "id": "A21",
      "type": "Wait for",
      "section": "Verification stage",
+     "purpose": "Five days to verify.",
      "config": {
       "raw": "verified is true · give up after 5 days",
       "mode": "for",
@@ -540,6 +559,7 @@ window.JOURNEY_DATA = {
      "id": "A22",
      "type": "Branch",
      "section": "Verification stage",
+     "purpose": "Checks whether they opened the reminder, to choose the next email.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -568,6 +588,7 @@ window.JOURNEY_DATA = {
      "id": "A23",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "For openers: suggests practising on a demo account while verification is pending, to keep their interest.",
      "config": {
       "raw": "**S02-E2a** (practise on a demo while you verify)",
       "template": "S02-E2a",
@@ -585,6 +606,7 @@ window.JOURNEY_DATA = {
      "id": "A24",
      "type": "Send",
      "section": "Verification stage",
+     "purpose": "For non-openers: a plain reminder to verify.",
      "config": {
       "raw": "**S02-E2b** (reminder)",
       "template": "S02-E2b",
@@ -602,6 +624,7 @@ window.JOURNEY_DATA = {
      "id": "A25",
      "type": "Wait for",
      "section": "Verification stage",
+     "purpose": "A week to verify.",
      "config": {
       "raw": "verified is true · give up after 7 days",
       "mode": "for",
@@ -633,6 +656,7 @@ window.JOURNEY_DATA = {
      "id": "A26",
      "type": "Branch",
      "section": "Verification stage",
+     "purpose": "Checks for a second open. Opening twice without verifying shows interest that a call might turn into action.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -661,6 +685,7 @@ window.JOURNEY_DATA = {
      "id": "A27",
      "type": "Call task",
      "section": "Verification stage",
+     "purpose": "Asks the account manager to call clients who keep opening the emails but have not verified.",
      "config": {
       "raw": "“Opened twice, still unverified — call”",
       "note": "Opened twice, still unverified — call"
@@ -676,6 +701,7 @@ window.JOURNEY_DATA = {
      "id": "A28",
      "type": "Wait for",
      "section": "Verification stage",
+     "purpose": "Silent final wait, with no more emails. If they verify within six weeks they still get the funding emails; if not, the journey ends.",
      "config": {
       "raw": "verified is true · give up after 6 weeks",
       "mode": "for",
@@ -707,6 +733,7 @@ window.JOURNEY_DATA = {
      "id": "A30",
      "type": "Wait",
      "section": "Funding stage",
+     "purpose": "Someone who has just verified gets their first funding email at the next 07:00, not at a random hour.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -724,6 +751,7 @@ window.JOURNEY_DATA = {
      "id": "A31",
      "type": "Branch",
      "section": "Funding stage",
+     "purpose": "Sorts verified clients by age: within 21 days of registering they get the full funding sequence; older ones go to the next check.",
      "config": {
       "raw": "registrationDate in last 21 days",
       "match": "all",
@@ -752,6 +780,7 @@ window.JOURNEY_DATA = {
      "id": "A33",
      "type": "Branch",
      "section": "Funding stage",
+     "purpose": "Clients 21 to 75 days in get the short final round (A50). Past day 75 there is no time left before day 90, so the journey ends and journey B picks them up later.",
      "config": {
       "raw": "registrationDate in last 75 days",
       "match": "all",
@@ -780,6 +809,7 @@ window.JOURNEY_DATA = {
      "id": "A32",
      "type": "Branch",
      "section": "Funding stage",
+     "purpose": "Checks whether a partner referred the client, so the first funding email can mention the partner.",
      "config": {
       "raw": "partnerId is set",
       "match": "all",
@@ -808,6 +838,7 @@ window.JOURNEY_DATA = {
      "id": "A34",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "Funding email for partner referrals: acknowledges the partner and explains how to fund.",
      "config": {
       "raw": "**S08-E1** (you joined through a partner)",
       "template": "S08-E1",
@@ -825,6 +856,7 @@ window.JOURNEY_DATA = {
      "id": "A35",
      "type": "Branch",
      "section": "Funding stage",
+     "purpose": "Checks for Meta sign-ups, so the funding email can continue the ad’s message.",
      "config": {
       "raw": "tags contains `src-meta`",
       "match": "all",
@@ -853,6 +885,7 @@ window.JOURNEY_DATA = {
      "id": "A36",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "Funding email for Meta sign-ups: you are verified, and you can fund from $10.",
      "config": {
       "raw": "**S07-E2a** (you’re verified, funding from $10)",
       "template": "S07-E2a",
@@ -870,6 +903,7 @@ window.JOURNEY_DATA = {
      "id": "A37",
      "type": "A/B split",
      "section": "Funding stage",
+     "purpose": "Tests two subject lines on the main funding email. Once each has 100 sends, Voyager sends the one with more opens to everyone.",
      "config": {
       "raw": "50% to A · auto-winner: best open rate · minimum 100 sends per arm",
       "weight": "50",
@@ -891,6 +925,7 @@ window.JOURNEY_DATA = {
      "id": "A38",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "The main funding email, subject A: how funding works.",
      "config": {
       "raw": "**S03-E1** (here’s how funding works)",
       "template": "S03-E1",
@@ -908,6 +943,7 @@ window.JOURNEY_DATA = {
      "id": "A39",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "The same funding email with subject B, for the test.",
      "config": {
       "raw": "**S03-E1-B** (variant subject, below)",
       "template": "S03-E1-B",
@@ -925,6 +961,7 @@ window.JOURNEY_DATA = {
      "id": "A40",
      "type": "Wait for",
      "section": "Funding stage",
+     "purpose": "Waits up to three days to see whether they click the funding email.",
      "config": {
       "raw": "Clicked the last email · give up after 3 days",
       "mode": "for",
@@ -956,6 +993,7 @@ window.JOURNEY_DATA = {
      "id": "A41",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "For clickers: helps them choose the account type that suits them, usually the last question before a deposit.",
      "config": {
       "raw": "**S03-E2a** (which account suits you)",
       "template": "S03-E2a",
@@ -973,6 +1011,7 @@ window.JOURNEY_DATA = {
      "id": "A42",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "For non-clickers: lowers the bar with a small start on a Cent account.",
      "config": {
       "raw": "**S03-E2b** (start small with a Cent account)",
       "template": "S03-E2b",
@@ -990,6 +1029,7 @@ window.JOURNEY_DATA = {
      "id": "A43",
      "type": "Wait",
      "section": "Funding stage",
+     "purpose": "A four-day pause so the emails do not arrive too close together.",
      "config": {
       "raw": "4 days",
       "mode": "duration",
@@ -1007,6 +1047,7 @@ window.JOURNEY_DATA = {
      "id": "A44",
      "type": "Wait",
      "section": "Funding stage",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -1024,6 +1065,7 @@ window.JOURNEY_DATA = {
      "id": "A45",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "For people not ready to deposit: free webinars, so they can learn first.",
      "config": {
       "raw": "**S03-E3** (learn first: free webinars)",
       "template": "S03-E3",
@@ -1041,6 +1083,7 @@ window.JOURNEY_DATA = {
      "id": "A46",
      "type": "Wait for",
      "section": "Funding stage",
+     "purpose": "Watches for a login over ten days. A login means they are thinking about it, so we respond the same day.",
      "config": {
       "raw": "lastLoginDate is today · give up after 10 days",
       "mode": "for",
@@ -1072,6 +1115,7 @@ window.JOURNEY_DATA = {
      "id": "A47",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "Sent the moment they log in: welcome back, with deposit help while they are on the site.",
      "config": {
       "raw": "**S06-E1** (welcome back) — sent at once, while they are active",
       "template": "S06-E1",
@@ -1089,6 +1133,7 @@ window.JOURNEY_DATA = {
      "id": "A48",
      "type": "Wait for",
      "section": "Funding stage",
+     "purpose": "Waits two days to see whether they click the welcome-back email.",
      "config": {
       "raw": "Clicked the last email · give up after 2 days",
       "mode": "for",
@@ -1120,6 +1165,7 @@ window.JOURNEY_DATA = {
      "id": "A49",
      "type": "Call task",
      "section": "Funding stage",
+     "purpose": "They logged in and clicked deposit help but still have not funded, so something may be in the way: asks the account manager to call today.",
      "config": {
       "raw": "“Logged in and clicked deposit help, not funded — call today”",
       "note": "Logged in and clicked deposit help, not funded — call today"
@@ -1135,6 +1181,7 @@ window.JOURNEY_DATA = {
      "id": "A49b",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "Asks whether the deposit page worked and offers help with any problem.",
      "config": {
       "raw": "**S06-E2a** (did the deposit page work?)",
       "template": "S06-E2a",
@@ -1152,6 +1199,7 @@ window.JOURNEY_DATA = {
      "id": "A49c",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "For those who did not click: helps them choose an account to start with.",
      "config": {
       "raw": "**S06-E2b** (which account to start with)",
       "template": "S06-E2b",
@@ -1169,6 +1217,7 @@ window.JOURNEY_DATA = {
      "id": "A49w",
      "type": "Wait",
      "section": "Funding stage",
+     "purpose": "A five-day pause before the last round.",
      "config": {
       "raw": "5 days",
       "mode": "duration",
@@ -1186,6 +1235,7 @@ window.JOURNEY_DATA = {
      "id": "A50",
      "type": "Branch",
      "section": "Funding stage",
+     "purpose": "The last round goes only to people still reading (opened the last email) or who have had no email yet (late entrants). Everyone else is left alone.",
      "config": {
       "raw": "Any: Opened the last email is true · Received any email (this journey) is false",
       "match": "any",
@@ -1221,6 +1271,7 @@ window.JOURNEY_DATA = {
      "id": "A51",
      "type": "Wait",
      "section": "Funding stage",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -1238,6 +1289,7 @@ window.JOURNEY_DATA = {
      "id": "A52",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "Answers the three questions people usually have before a first deposit.",
      "config": {
       "raw": "**S04-E1** (three questions before a first deposit)",
       "template": "S04-E1",
@@ -1255,6 +1307,7 @@ window.JOURNEY_DATA = {
      "id": "A53",
      "type": "Wait for",
      "section": "Funding stage",
+     "purpose": "Waits up to four days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 4 days",
       "mode": "for",
@@ -1286,6 +1339,7 @@ window.JOURNEY_DATA = {
      "id": "A54a",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "For clickers: the first deposit, step by step.",
      "config": {
       "raw": "**S04-E2a** (your first deposit, step by step)",
       "template": "S04-E2a",
@@ -1303,6 +1357,7 @@ window.JOURNEY_DATA = {
      "id": "A54",
      "type": "Branch",
      "section": "Funding stage",
+     "purpose": "For non-clickers: checks whether they at least opened, to decide on one more email.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -1331,6 +1386,7 @@ window.JOURNEY_DATA = {
      "id": "A54b",
      "type": "Send",
      "section": "Funding stage",
+     "purpose": "For openers who did not click: offers to learn first, with no pressure to deposit.",
      "config": {
       "raw": "**S04-E2b** (prefer to learn first?)",
       "template": "S04-E2b",
@@ -1348,6 +1404,7 @@ window.JOURNEY_DATA = {
      "id": "A55",
      "type": "Wait for",
      "section": "Funding stage",
+     "purpose": "Final watch: a login within two weeks leads to a call; otherwise the journey ends.",
      "config": {
       "raw": "lastLoginDate is today · give up after 14 days",
       "mode": "for",
@@ -1379,6 +1436,7 @@ window.JOURNEY_DATA = {
      "id": "A56",
      "type": "Call task",
      "section": "Funding stage",
+     "purpose": "Verified, came back to log in, still not funded: asks the account manager to call.",
      "config": {
       "raw": "“Verified, logged in again, still not funded — call”",
       "note": "Verified, logged in again, still not funded — call"
@@ -1394,6 +1452,7 @@ window.JOURNEY_DATA = {
      "id": "A99",
      "type": "Exit",
      "section": "Funding stage",
+     "purpose": "End of the journey. A first deposit, or reaching day 90, also ends it from any step.",
      "config": {
       "raw": "—"
      },
@@ -1496,6 +1555,7 @@ window.JOURNEY_DATA = {
      "id": "B1",
      "type": "Trigger",
      "section": "",
+     "purpose": "Starts for verified clients who registered more than 90 days ago and never deposited. At launch they are released one country group at a time.",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -1511,6 +1571,7 @@ window.JOURNEY_DATA = {
      "id": "B2",
      "type": "Branch",
      "section": "",
+     "purpose": "Safety check before anything is sent: anyone the CRM marks as not to be contacted (do not contact, fraud, under age, duplicate, wrong details, closed, not interested) leaves here.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery · Not Interested",
       "match": "any",
@@ -1581,6 +1642,7 @@ window.JOURNEY_DATA = {
      "id": "B3",
      "type": "Wait",
      "section": "",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -1598,6 +1660,7 @@ window.JOURNEY_DATA = {
      "id": "B4",
      "type": "Branch",
      "section": "",
+     "purpose": "Splits by recent activity: people who logged in during the last 30 days get a direct deposit sequence (B20); people who have gone cold get a softer one.",
      "config": {
       "raw": "lastLoginDate in last 30 days",
       "match": "all",
@@ -1626,6 +1689,7 @@ window.JOURNEY_DATA = {
      "id": "B5",
      "type": "A/B split",
      "section": "Cold: no login in 30 days",
+     "purpose": "Tests two subject lines on the first email to cold clients. Once each has 100 sends, the one with more opens goes to everyone.",
      "config": {
       "raw": "50% to A · auto-winner: best open rate · minimum 100 sends per arm",
       "weight": "50",
@@ -1647,6 +1711,7 @@ window.JOURNEY_DATA = {
      "id": "B6",
      "type": "Send",
      "section": "Cold: no login in 30 days",
+     "purpose": "Cold clients, subject A: two ways to start small.",
      "config": {
       "raw": "**S05-E1** (two ways to start small)",
       "template": "S05-E1",
@@ -1664,6 +1729,7 @@ window.JOURNEY_DATA = {
      "id": "B7",
      "type": "Send",
      "section": "Cold: no login in 30 days",
+     "purpose": "The same email with subject B, which leads with the Cent account.",
      "config": {
       "raw": "**S05-E1-B** (variant subject, below)",
       "template": "S05-E1-B",
@@ -1681,6 +1747,7 @@ window.JOURNEY_DATA = {
      "id": "B8",
      "type": "Wait for",
      "section": "Cold: no login in 30 days",
+     "purpose": "Waits up to four days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 4 days",
       "mode": "for",
@@ -1712,6 +1779,7 @@ window.JOURNEY_DATA = {
      "id": "B9",
      "type": "Send",
      "section": "Cold: no login in 30 days",
+     "purpose": "For clickers: how to fund the account in three steps.",
      "config": {
       "raw": "**S05-E2a** (fund in three steps)",
       "template": "S05-E2a",
@@ -1729,6 +1797,7 @@ window.JOURNEY_DATA = {
      "id": "B10",
      "type": "Branch",
      "section": "Cold: no login in 30 days",
+     "purpose": "For non-clickers: checks whether they opened. People who did not even open get no more emails.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -1757,6 +1826,7 @@ window.JOURNEY_DATA = {
      "id": "B11",
      "type": "Send",
      "section": "Cold: no login in 30 days",
+     "purpose": "For openers: free sessions to learn before depositing.",
      "config": {
       "raw": "**S05-E2b** (free sessions)",
       "template": "S05-E2b",
@@ -1774,6 +1844,7 @@ window.JOURNEY_DATA = {
      "id": "B12",
      "type": "Wait for",
      "section": "Cold: no login in 30 days",
+     "purpose": "Watches for a login over ten days.",
      "config": {
       "raw": "lastLoginDate is today · give up after 10 days",
       "mode": "for",
@@ -1805,6 +1876,7 @@ window.JOURNEY_DATA = {
      "id": "B13",
      "type": "Call task",
      "section": "Cold: no login in 30 days",
+     "purpose": "A long-registered client who logs in after our email is a strong signal: asks the account manager to call.",
      "config": {
       "raw": "“Long-registered client logged in after our email — call”",
       "note": "Long-registered client logged in after our email — call"
@@ -1820,6 +1892,7 @@ window.JOURNEY_DATA = {
      "id": "B14",
      "type": "Send",
      "section": "Cold: no login in 30 days",
+     "purpose": "No login: asks whether they still want our emails, a clean way to stop mailing people who are not interested.",
      "config": {
       "raw": "**S05-E3** (do you still want to hear from us?)",
       "template": "S05-E3",
@@ -1837,6 +1910,7 @@ window.JOURNEY_DATA = {
      "id": "B20",
      "type": "Send",
      "section": "Warm: logged in within 30 days",
+     "purpose": "For clients who still log in: answers the three questions people have before a first deposit.",
      "config": {
       "raw": "**S04-E1** (three questions before a first deposit)",
       "template": "S04-E1",
@@ -1854,6 +1928,7 @@ window.JOURNEY_DATA = {
      "id": "B21",
      "type": "Wait for",
      "section": "Warm: logged in within 30 days",
+     "purpose": "Waits up to four days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 4 days",
       "mode": "for",
@@ -1885,6 +1960,7 @@ window.JOURNEY_DATA = {
      "id": "B22",
      "type": "Send",
      "section": "Warm: logged in within 30 days",
+     "purpose": "For clickers: the first deposit, step by step.",
      "config": {
       "raw": "**S04-E2a** (your first deposit, step by step)",
       "template": "S04-E2a",
@@ -1902,6 +1978,7 @@ window.JOURNEY_DATA = {
      "id": "B23",
      "type": "Call task",
      "section": "Warm: logged in within 30 days",
+     "purpose": "They log in and clicked the deposit steps but have not funded: asks the account manager to call.",
      "config": {
       "raw": "“Verified long ago, logs in, clicked deposit info — call”",
       "note": "Verified long ago, logs in, clicked deposit info — call"
@@ -1917,6 +1994,7 @@ window.JOURNEY_DATA = {
      "id": "B24",
      "type": "Branch",
      "section": "Warm: logged in within 30 days",
+     "purpose": "For non-clickers: checks whether they opened. Non-openers leave.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -1945,6 +2023,7 @@ window.JOURNEY_DATA = {
      "id": "B25",
      "type": "Send",
      "section": "Warm: logged in within 30 days",
+     "purpose": "For openers: offers to learn first, with no pressure to deposit.",
      "config": {
       "raw": "**S04-E2b** (prefer to learn first?)",
       "template": "S04-E2b",
@@ -1962,6 +2041,7 @@ window.JOURNEY_DATA = {
      "id": "B99",
      "type": "Exit",
      "section": "Warm: logged in within 30 days",
+     "purpose": "End of the journey. A first deposit also ends it from any step. It can start again after 180 days.",
      "config": {
       "raw": "—"
      },
@@ -2052,6 +2132,7 @@ window.JOURNEY_DATA = {
      "id": "C1",
      "type": "Trigger",
      "section": "Entry",
+     "purpose": "Starts for clients who deposited in the past but have not deposited or traded for 30 days.",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -2067,6 +2148,7 @@ window.JOURNEY_DATA = {
      "id": "C2",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Safety check before anything is sent: anyone the CRM marks as not to be contacted (do not contact, fraud, under age, duplicate, wrong details, closed, not interested) leaves here.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery · Not Interested",
       "match": "any",
@@ -2137,6 +2219,7 @@ window.JOURNEY_DATA = {
      "id": "C3",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Removes clients who deposited but never traded. They have not lapsed from trading, so win-back messages would not fit them.",
      "config": {
       "raw": "lastTradedAt is empty (deposited but never traded)",
       "match": "all",
@@ -2165,6 +2248,7 @@ window.JOURNEY_DATA = {
      "id": "C4",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Sorts people on arrival: last deposit over a year ago goes straight to the over-a-year stage.",
      "config": {
       "raw": "lastDepositDate over 365 days ago",
       "match": "all",
@@ -2193,6 +2277,7 @@ window.JOURNEY_DATA = {
      "id": "C5",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Last deposit 6 to 12 months ago goes straight to stage 3.",
      "config": {
       "raw": "lastDepositDate over 180 days ago",
       "match": "all",
@@ -2221,6 +2306,7 @@ window.JOURNEY_DATA = {
      "id": "C6",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Last deposit over 75 days ago starts at the dormancy-notice check; anyone more recent starts at stage 1.",
      "config": {
       "raw": "lastDepositDate over 75 days ago",
       "match": "all",
@@ -2249,6 +2335,7 @@ window.JOURNEY_DATA = {
      "id": "C10",
      "type": "Wait",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -2266,6 +2353,7 @@ window.JOURNEY_DATA = {
      "id": "C11",
      "type": "Branch",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Checks whether they still have $10 or more in the account. That decides the tone of the emails.",
      "config": {
       "raw": "MT5 balance ≥ 10",
       "match": "all",
@@ -2294,6 +2382,7 @@ window.JOURNEY_DATA = {
      "id": "C12",
      "type": "Send",
      "section": "Stage 1 — Lapsing",
+     "purpose": "With money in the account: what they have missed in the markets.",
      "config": {
       "raw": "**S09-E1** (what you’ve missed in the markets)",
       "template": "S09-E1",
@@ -2311,6 +2400,7 @@ window.JOURNEY_DATA = {
      "id": "C13",
      "type": "Send",
      "section": "Stage 1 — Lapsing",
+     "purpose": "With little or no money left: a short review before the next trade, leading with risk.",
      "config": {
       "raw": "**S14-E1** (before your next trade: a short review)",
       "template": "S14-E1",
@@ -2328,6 +2418,7 @@ window.JOURNEY_DATA = {
      "id": "C14",
      "type": "Wait for",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Watches for a login over five days.",
      "config": {
       "raw": "lastLoginDate is today · give up after 5 days",
       "mode": "for",
@@ -2359,6 +2450,7 @@ window.JOURNEY_DATA = {
      "id": "C15",
      "type": "Branch",
      "section": "Stage 1 — Lapsing",
+     "purpose": "They logged in: checks the balance again to choose the follow-up.",
      "config": {
       "raw": "MT5 balance ≥ 10",
       "match": "all",
@@ -2387,6 +2479,7 @@ window.JOURNEY_DATA = {
      "id": "C16",
      "type": "Send",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Logged in with money in the account: topping up takes a minute.",
      "config": {
       "raw": "**S09-E2a** (back in your account? topping up takes a minute)",
       "template": "S09-E2a",
@@ -2404,6 +2497,7 @@ window.JOURNEY_DATA = {
      "id": "C17",
      "type": "Send",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Logged in with little or no balance: a lower-exposure restart with a Cent account.",
      "config": {
       "raw": "**S14-E2c** (a lower-exposure way: the Cent account)",
       "template": "S14-E2c",
@@ -2421,6 +2515,7 @@ window.JOURNEY_DATA = {
      "id": "C18",
      "type": "Branch",
      "section": "Stage 1 — Lapsing",
+     "purpose": "No login: checks whether they clicked.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -2449,6 +2544,7 @@ window.JOURNEY_DATA = {
      "id": "C18a",
      "type": "Send",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Clicked but did not log in: a free session on risk management.",
      "config": {
       "raw": "**S14-E2b** (free session: risk management)",
       "template": "S14-E2b",
@@ -2466,6 +2562,7 @@ window.JOURNEY_DATA = {
      "id": "C19",
      "type": "Branch",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Did not click: checks whether they opened.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -2494,6 +2591,7 @@ window.JOURNEY_DATA = {
      "id": "C19a",
      "type": "Send",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Opened only: asks whether something was not working for them, to hear the reason they stopped.",
      "config": {
       "raw": "**S09-E2b** (was something not working for you?)",
       "template": "S09-E2b",
@@ -2511,6 +2609,7 @@ window.JOURNEY_DATA = {
      "id": "C20",
      "type": "Wait for",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Waits for whichever comes first: a login, or the day they pass 75 days since their last deposit (the next stage).",
      "config": {
       "raw": "Any: lastLoginDate is today · lastDepositDate over 75 days ago — give up after 10 weeks",
       "mode": "for",
@@ -2549,6 +2648,7 @@ window.JOURNEY_DATA = {
      "id": "C21",
      "type": "Branch",
      "section": "Stage 1 — Lapsing",
+     "purpose": "Was it a login? If so, a call follows; if not, the 75-day mark has arrived and they move on.",
      "config": {
       "raw": "lastLoginDate is today",
       "match": "all",
@@ -2577,6 +2677,7 @@ window.JOURNEY_DATA = {
      "id": "C22",
      "type": "Call task",
      "section": "Stage 1 — Lapsing",
+     "purpose": "A lapsing client logged in but did not fund: asks the account manager to call.",
      "config": {
       "raw": "“Lapsing client logged in, not re-funded — call”",
       "note": "Lapsing client logged in, not re-funded — call"
@@ -2592,6 +2693,7 @@ window.JOURNEY_DATA = {
      "id": "C23",
      "type": "Wait for",
      "section": "Stage 1 — Lapsing",
+     "purpose": "After the call task, waits for the 75-day mark so the next stage starts on time.",
      "config": {
       "raw": "lastDepositDate over 75 days ago · give up after 10 weeks",
       "mode": "for",
@@ -2623,6 +2725,7 @@ window.JOURNEY_DATA = {
      "id": "C24",
      "type": "Branch",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "The dormancy notice only goes to clients with $10 or more left, because the fee applies to balances. Everyone else skips ahead.",
      "config": {
       "raw": "MT5 balance ≥ 10",
       "match": "all",
@@ -2651,6 +2754,7 @@ window.JOURNEY_DATA = {
      "id": "C25",
      "type": "Wait",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -2668,6 +2772,7 @@ window.JOURNEY_DATA = {
      "id": "C26",
      "type": "Send",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "Tells them they still have money in the account, explains the dormancy fee and gives three options.",
      "config": {
       "raw": "**S13-E1** (you still have funds in your account)",
       "template": "S13-E1",
@@ -2685,6 +2790,7 @@ window.JOURNEY_DATA = {
      "id": "C27",
      "type": "Wait for",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "Watches for a login over five days.",
      "config": {
       "raw": "lastLoginDate is today · give up after 5 days",
       "mode": "for",
@@ -2716,6 +2822,7 @@ window.JOURNEY_DATA = {
      "id": "C28",
      "type": "Branch",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "They logged in: checks whether they clicked.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -2744,6 +2851,7 @@ window.JOURNEY_DATA = {
      "id": "C28a",
      "type": "Send",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "Logged in and clicked: two ways to put the balance to work.",
      "config": {
       "raw": "**S13-E2a** (two ways to put your balance to work)",
       "template": "S13-E2a",
@@ -2761,6 +2869,7 @@ window.JOURNEY_DATA = {
      "id": "C28b",
      "type": "Send",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "Logged in but did not click: offers help deciding.",
      "config": {
       "raw": "**S13-E2b** (need a hand deciding?)",
       "template": "S13-E2b",
@@ -2778,6 +2887,7 @@ window.JOURNEY_DATA = {
      "id": "C29",
      "type": "Send",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "No login: a reminder about their balance and the dormancy fee.",
      "config": {
       "raw": "**S13-E2c** (reminder: your balance and the dormancy fee)",
       "template": "S13-E2c",
@@ -2795,6 +2905,7 @@ window.JOURNEY_DATA = {
      "id": "C40w",
      "type": "Wait for",
      "section": "Stage 1b — Dormancy notice",
+     "purpose": "Waits until 90 days since the last deposit, when stage 2 begins.",
      "config": {
       "raw": "lastDepositDate over 90 days ago · give up after 4 weeks",
       "mode": "for",
@@ -2826,6 +2937,7 @@ window.JOURNEY_DATA = {
      "id": "C40",
      "type": "Branch",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "Stage 2 goes only to people who opened the last email or have had none yet. Non-openers skip this stage’s emails and wait silently.",
      "config": {
       "raw": "Any: Opened the last email is true · Received any email (this journey) is false",
       "match": "any",
@@ -2861,6 +2973,7 @@ window.JOURNEY_DATA = {
      "id": "C41",
      "type": "Wait",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -2878,6 +2991,7 @@ window.JOURNEY_DATA = {
      "id": "C42",
      "type": "Send",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "Introduces copy trading as a different way to be in the markets.",
      "config": {
       "raw": "**S10-E1** (a different way to be in the markets)",
       "template": "S10-E1",
@@ -2895,6 +3009,7 @@ window.JOURNEY_DATA = {
      "id": "C43",
      "type": "Wait for",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "Waits up to four days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 4 days",
       "mode": "for",
@@ -2926,6 +3041,7 @@ window.JOURNEY_DATA = {
      "id": "C44",
      "type": "Send",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "For clickers: how to choose a strategy provider and fund an account to follow one.",
      "config": {
       "raw": "**S10-E2a** (choosing a provider, and funding to follow one)",
       "template": "S10-E2a",
@@ -2943,6 +3059,7 @@ window.JOURNEY_DATA = {
      "id": "C45",
      "type": "Branch",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "For non-clickers: checks whether they opened.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -2971,6 +3088,7 @@ window.JOURNEY_DATA = {
      "id": "C46",
      "type": "Send",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "For openers: a workshop for traders who stopped.",
      "config": {
       "raw": "**S10-E2b** (a workshop for traders who stopped)",
       "template": "S10-E2b",
@@ -2988,6 +3106,7 @@ window.JOURNEY_DATA = {
      "id": "C50",
      "type": "Wait for",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "Waits for whichever comes first: a login, or 180 days since the last deposit (stage 3).",
      "config": {
       "raw": "Any: lastLoginDate is today · lastDepositDate over 180 days ago — give up after 14 weeks",
       "mode": "for",
@@ -3026,6 +3145,7 @@ window.JOURNEY_DATA = {
      "id": "C51",
      "type": "Branch",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "Was it a login? If so, a call follows; if not, stage 3 has arrived.",
      "config": {
       "raw": "lastLoginDate is today",
       "match": "all",
@@ -3054,6 +3174,7 @@ window.JOURNEY_DATA = {
      "id": "C52",
      "type": "Call task",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "A client dormant for 3 to 6 months logged in: asks the account manager to call.",
      "config": {
       "raw": "“Dormant 3–6 months, logged in — call”",
       "note": "Dormant 3–6 months, logged in — call"
@@ -3069,6 +3190,7 @@ window.JOURNEY_DATA = {
      "id": "C53",
      "type": "Wait for",
      "section": "Stage 2 — Dormant 3–6 months",
+     "purpose": "After the call task, waits for the 180-day mark so stage 3 starts on time.",
      "config": {
       "raw": "lastDepositDate over 180 days ago · give up after 14 weeks",
       "mode": "for",
@@ -3100,6 +3222,7 @@ window.JOURNEY_DATA = {
      "id": "C60",
      "type": "Branch",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "Stage 3 goes only to people who opened the last email or have had none yet. Non-openers wait silently for stage 4.",
      "config": {
       "raw": "Any: Opened the last email is true · Received any email (this journey) is false",
       "match": "any",
@@ -3135,6 +3258,7 @@ window.JOURNEY_DATA = {
      "id": "C61",
      "type": "Wait",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -3152,6 +3276,7 @@ window.JOURNEY_DATA = {
      "id": "C62",
      "type": "Send",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "Suggests starting again, smaller.",
      "config": {
       "raw": "**S11-E1** (start again, smaller)",
       "template": "S11-E1",
@@ -3169,6 +3294,7 @@ window.JOURNEY_DATA = {
      "id": "C63",
      "type": "Wait for",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "Waits up to five days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 5 days",
       "mode": "for",
@@ -3200,6 +3326,7 @@ window.JOURNEY_DATA = {
      "id": "C64",
      "type": "Send",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "For clickers: how to open a Cent account and fund it.",
      "config": {
       "raw": "**S11-E2a** (opening a Cent account and funding it)",
       "template": "S11-E2a",
@@ -3217,6 +3344,7 @@ window.JOURNEY_DATA = {
      "id": "C65",
      "type": "Branch",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "For non-clickers: checks whether they opened. Non-openers wait silently for stage 4.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -3245,6 +3373,7 @@ window.JOURNEY_DATA = {
      "id": "C65a",
      "type": "Send",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "For openers: a free refresher before coming back.",
      "config": {
       "raw": "**S11-E2b** (a free refresher before you come back)",
       "template": "S11-E2b",
@@ -3262,6 +3391,7 @@ window.JOURNEY_DATA = {
      "id": "C66",
      "type": "Wait",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "A ten-day pause before the last email of the stage.",
      "config": {
       "raw": "10 days",
       "mode": "duration",
@@ -3279,6 +3409,7 @@ window.JOURNEY_DATA = {
      "id": "C67",
      "type": "Send",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "Asks whether they want to stay in touch, so uninterested clients can say no.",
      "config": {
       "raw": "**S11-E3** (should we stay in touch?)",
       "template": "S11-E3",
@@ -3296,6 +3427,7 @@ window.JOURNEY_DATA = {
      "id": "C70w",
      "type": "Wait for",
      "section": "Stage 3 — Dormant 6–12 months",
+     "purpose": "Waits until a year since the last deposit, when stage 4 begins.",
      "config": {
       "raw": "lastDepositDate over 365 days ago · give up after 30 weeks",
       "mode": "for",
@@ -3327,6 +3459,7 @@ window.JOURNEY_DATA = {
      "id": "C70",
      "type": "Branch",
      "section": "Stage 4 — Over a year",
+     "purpose": "Stage 4 goes only to people who opened the last email or have had none yet. Non-openers leave without another email.",
      "config": {
       "raw": "Any: Opened the last email is true · Received any email (this journey) is false",
       "match": "any",
@@ -3362,6 +3495,7 @@ window.JOURNEY_DATA = {
      "id": "C71",
      "type": "Wait",
      "section": "Stage 4 — Over a year",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -3379,6 +3513,7 @@ window.JOURNEY_DATA = {
      "id": "C72",
      "type": "Send",
      "section": "Stage 4 — Over a year",
+     "purpose": "Tells them what has changed at TenTrade since they last traded.",
      "config": {
       "raw": "**S12-E1** (TenTrade has changed since you last traded)",
       "template": "S12-E1",
@@ -3396,6 +3531,7 @@ window.JOURNEY_DATA = {
      "id": "C73",
      "type": "Wait",
      "section": "Stage 4 — Over a year",
+     "purpose": "A five-day pause.",
      "config": {
       "raw": "5 days",
       "mode": "duration",
@@ -3413,6 +3549,7 @@ window.JOURNEY_DATA = {
      "id": "C74",
      "type": "Branch",
      "section": "Stage 4 — Over a year",
+     "purpose": "Checks whether they opened. If not, the journey ends.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -3441,6 +3578,7 @@ window.JOURNEY_DATA = {
      "id": "C75",
      "type": "Branch",
      "section": "Stage 4 — Over a year",
+     "purpose": "Checks whether they clicked, to choose the last email.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -3469,6 +3607,7 @@ window.JOURNEY_DATA = {
      "id": "C76",
      "type": "Send",
      "section": "Stage 4 — Over a year",
+     "purpose": "For clickers: the simplest route back.",
      "config": {
       "raw": "**S12-E2a** (coming back? the simplest route)",
       "template": "S12-E2a",
@@ -3486,6 +3625,7 @@ window.JOURNEY_DATA = {
      "id": "C77",
      "type": "Send",
      "section": "Stage 4 — Over a year",
+     "purpose": "For openers who did not click: asks whether we should stop emailing them.",
      "config": {
       "raw": "**S12-E2b** (should we stop emailing you?)",
       "template": "S12-E2b",
@@ -3503,6 +3643,7 @@ window.JOURNEY_DATA = {
      "id": "C99",
      "type": "Exit",
      "section": "Stage 4 — Over a year",
+     "purpose": "End of the journey. A deposit or a trade also ends it from any step. A client still dormant can start again after a year.",
      "config": {
       "raw": "—"
      },
@@ -3580,6 +3721,7 @@ window.JOURNEY_DATA = {
      "id": "D1",
      "type": "Trigger",
      "section": "Entry",
+     "purpose": "Starts on a client’s first deposit and runs for their first 45 days.",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -3595,6 +3737,7 @@ window.JOURNEY_DATA = {
      "id": "D2",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Safety check before anything is sent: anyone the CRM marks as not to be contacted (do not contact, fraud, under age, duplicate, wrong details, closed, not interested) leaves here.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery · Not Interested",
       "match": "any",
@@ -3665,6 +3808,7 @@ window.JOURNEY_DATA = {
      "id": "D3",
      "type": "Wait",
      "section": "Entry",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -3682,6 +3826,7 @@ window.JOURNEY_DATA = {
      "id": "D4",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Sorts people on arrival: anyone who deposited in the last three days starts at the beginning; older entrants (at launch) go to the next checks.",
      "config": {
       "raw": "firstDepositDate in last 3 days",
       "match": "all",
@@ -3710,6 +3855,7 @@ window.JOURNEY_DATA = {
      "id": "D5",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Have they traded yet? If so, they skip the first-trade emails; if not, they go to the never-traded stage.",
      "config": {
       "raw": "lastTradedAt is set",
       "match": "all",
@@ -3738,6 +3884,7 @@ window.JOURNEY_DATA = {
      "id": "D6",
      "type": "Branch",
      "section": "Entry",
+     "purpose": "Traded and still within 14 days of the first deposit: planning tools. Past day 14: the second-deposit stage.",
      "config": {
       "raw": "firstDepositDate in last 14 days",
       "match": "all",
@@ -3766,6 +3913,7 @@ window.JOURNEY_DATA = {
      "id": "D9",
      "type": "A/B split",
      "section": "Stage 1 — first trade",
+     "purpose": "Tests two subject lines on the first email. Once each has 50 sends, the one with more opens goes to everyone.",
      "config": {
       "raw": "50% to A · auto-winner: best open rate · minimum 50 sends per arm",
       "weight": "50",
@@ -3787,6 +3935,7 @@ window.JOURNEY_DATA = {
      "id": "D10",
      "type": "Send",
      "section": "Stage 1 — first trade",
+     "purpose": "Subject A: your deposit is in, and here are three steps to a first trade.",
      "config": {
       "raw": "**S15-E1** (your deposit is in: three steps to your first trade)",
       "template": "S15-E1",
@@ -3804,6 +3953,7 @@ window.JOURNEY_DATA = {
      "id": "D10b",
      "type": "Send",
      "section": "Stage 1 — first trade",
+     "purpose": "The same email with subject B, which leads with a first look at MetaTrader 5.",
      "config": {
       "raw": "**S15-E1-B** (variant subject, below)",
       "template": "S15-E1-B",
@@ -3821,6 +3971,7 @@ window.JOURNEY_DATA = {
      "id": "D11",
      "type": "Wait for",
      "section": "Stage 1 — first trade",
+     "purpose": "Waits up to three days for a first trade.",
      "config": {
       "raw": "lastTradedAt is set · give up after 3 days",
       "mode": "for",
@@ -3852,6 +4003,7 @@ window.JOURNEY_DATA = {
      "id": "D12",
      "type": "Send",
      "section": "Stage 1 — first trade",
+     "purpose": "Sent the moment they make a first trade: well done, and the next thing to learn is risk.",
      "config": {
       "raw": "**S15-E2a** (your first trade is done: now risk) — sent at once",
       "template": "S15-E2a",
@@ -3869,6 +4021,7 @@ window.JOURNEY_DATA = {
      "id": "D13",
      "type": "Branch",
      "section": "Stage 1 — first trade",
+     "purpose": "No trade yet: checks whether they clicked.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -3897,6 +4050,7 @@ window.JOURNEY_DATA = {
      "id": "D14",
      "type": "Send",
      "section": "Stage 1 — first trade",
+     "purpose": "For clickers: a guided tour of the platform.",
      "config": {
       "raw": "**S15-E2b** (a guided tour of the platform)",
       "template": "S15-E2b",
@@ -3914,6 +4068,7 @@ window.JOURNEY_DATA = {
      "id": "D15",
      "type": "Send",
      "section": "Stage 1 — first trade",
+     "purpose": "For non-clickers: offers help getting started.",
      "config": {
       "raw": "**S15-E2c** (need help getting started?)",
       "template": "S15-E2c",
@@ -3931,6 +4086,7 @@ window.JOURNEY_DATA = {
      "id": "D16",
      "type": "Wait for",
      "section": "Stage 1 — first trade",
+     "purpose": "Four more days for a first trade. A trade leads to the well-done email (D12); no trade leads to the never-traded stage.",
      "config": {
       "raw": "lastTradedAt is set · give up after 4 days",
       "mode": "for",
@@ -3962,6 +4118,7 @@ window.JOURNEY_DATA = {
      "id": "D20",
      "type": "Branch",
      "section": "Stage 2 — never traded",
+     "purpose": "The never-traded emails only make sense if money is still in the account. If it has been withdrawn, the journey ends.",
      "config": {
       "raw": "MT5 balance > 0",
       "match": "all",
@@ -3990,6 +4147,7 @@ window.JOURNEY_DATA = {
      "id": "D21",
      "type": "Wait",
      "section": "Stage 2 — never traded",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -4007,6 +4165,7 @@ window.JOURNEY_DATA = {
      "id": "D22",
      "type": "Send",
      "section": "Stage 2 — never traded",
+     "purpose": "Your account is funded: what is holding you back?",
      "config": {
       "raw": "**S16-E1** (your account is funded: what’s holding you back?)",
       "template": "S16-E1",
@@ -4024,6 +4183,7 @@ window.JOURNEY_DATA = {
      "id": "D23",
      "type": "Wait for",
      "section": "Stage 2 — never traded",
+     "purpose": "Waits up to three days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 3 days",
       "mode": "for",
@@ -4055,6 +4215,7 @@ window.JOURNEY_DATA = {
      "id": "D24",
      "type": "Wait for",
      "section": "Stage 2 — never traded",
+     "purpose": "They clicked: gives them five days to place a trade before following up.",
      "config": {
       "raw": "lastTradedAt is set · give up after 5 days",
       "mode": "for",
@@ -4086,6 +4247,7 @@ window.JOURNEY_DATA = {
      "id": "D25",
      "type": "Send",
      "section": "Stage 2 — never traded",
+     "purpose": "Clicked but still no trade: placing a first trade, step by step.",
      "config": {
       "raw": "**S16-E2a** (placing your first trade, step by step)",
       "template": "S16-E2a",
@@ -4103,6 +4265,7 @@ window.JOURNEY_DATA = {
      "id": "D26",
      "type": "Send",
      "section": "Stage 2 — never traded",
+     "purpose": "Did not click: suggests copy trading for people not ready to trade themselves.",
      "config": {
       "raw": "**S16-E2b** (not ready to trade yourself? copy trading)",
       "template": "S16-E2b",
@@ -4120,6 +4283,7 @@ window.JOURNEY_DATA = {
      "id": "D27",
      "type": "Wait for",
      "section": "Stage 2 — never traded",
+     "purpose": "Waits a week for a first trade.",
      "config": {
       "raw": "lastTradedAt is set · give up after 7 days",
       "mode": "for",
@@ -4151,6 +4315,7 @@ window.JOURNEY_DATA = {
      "id": "D28",
      "type": "Call task",
      "section": "Stage 2 — never traded",
+     "purpose": "Funded but still no trade after two emails: asks the account manager to call.",
      "config": {
       "raw": "“Funded, never traded after two emails — call”",
       "note": "Funded, never traded after two emails — call"
@@ -4166,6 +4331,7 @@ window.JOURNEY_DATA = {
      "id": "D30",
      "type": "Wait for",
      "section": "Traded — planning tools",
+     "purpose": "Holds traders until about day 7 after the first deposit, so the planning email arrives at a useful point.",
      "config": {
       "raw": "firstDepositDate over 6 days ago · give up after 7 days",
       "mode": "for",
@@ -4197,6 +4363,7 @@ window.JOURNEY_DATA = {
      "id": "D31",
      "type": "Wait",
      "section": "Traded — planning tools",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -4214,6 +4381,7 @@ window.JOURNEY_DATA = {
      "id": "D32",
      "type": "Send",
      "section": "Traded — planning tools",
+     "purpose": "Two tools for planning their trading week.",
      "config": {
       "raw": "**S15-E3** (two tools for planning your week)",
       "template": "S15-E3",
@@ -4231,6 +4399,7 @@ window.JOURNEY_DATA = {
      "id": "D33",
      "type": "Wait for",
      "section": "Traded — planning tools",
+     "purpose": "Waits until 14 days after the first deposit, when the second-deposit stage begins.",
      "config": {
       "raw": "firstDepositDate over 14 days ago · give up after 30 days",
       "mode": "for",
@@ -4262,6 +4431,7 @@ window.JOURNEY_DATA = {
      "id": "D40",
      "type": "Branch",
      "section": "Stage 3 — second deposit",
+     "purpose": "If they have already made a second deposit, the goal is met and the journey ends.",
      "config": {
       "raw": "lastDepositDate in last 13 days (a deposit since the first one)",
       "match": "all",
@@ -4290,6 +4460,7 @@ window.JOURNEY_DATA = {
      "id": "D41",
      "type": "Wait",
      "section": "Stage 3 — second deposit",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -4307,6 +4478,7 @@ window.JOURNEY_DATA = {
      "id": "D42",
      "type": "Branch",
      "section": "Stage 3 — second deposit",
+     "purpose": "Checks whether the balance is under $20, to choose the message.",
      "config": {
       "raw": "MT5 balance < 20",
       "match": "all",
@@ -4335,6 +4507,7 @@ window.JOURNEY_DATA = {
      "id": "D43",
      "type": "Send",
      "section": "Stage 3 — second deposit",
+     "purpose": "Low balance: your balance is running low, with a way to top up.",
      "config": {
       "raw": "**S17-E1a** (your balance is running low)",
       "template": "S17-E1a",
@@ -4352,6 +4525,7 @@ window.JOURNEY_DATA = {
      "id": "D44",
      "type": "Send",
      "section": "Stage 3 — second deposit",
+     "purpose": "Healthy balance: tools for the month ahead.",
      "config": {
       "raw": "**S17-E1b** (a few weeks in: tools for your next month)",
       "template": "S17-E1b",
@@ -4369,6 +4543,7 @@ window.JOURNEY_DATA = {
      "id": "D45",
      "type": "Wait for",
      "section": "Stage 3 — second deposit",
+     "purpose": "Waits up to five days for a deposit. A deposit ends the journey.",
      "config": {
       "raw": "lastDepositDate in last 1 day · give up after 5 days",
       "mode": "for",
@@ -4400,6 +4575,7 @@ window.JOURNEY_DATA = {
      "id": "D46",
      "type": "Branch",
      "section": "Stage 3 — second deposit",
+     "purpose": "No deposit: checks whether they clicked.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -4428,6 +4604,7 @@ window.JOURNEY_DATA = {
      "id": "D47",
      "type": "Send",
      "section": "Stage 3 — second deposit",
+     "purpose": "For clickers: compare what trades cost on PRO and ECN accounts.",
      "config": {
       "raw": "**S17-E2a** (check what your trades cost: PRO or ECN)",
       "template": "S17-E2a",
@@ -4445,6 +4622,7 @@ window.JOURNEY_DATA = {
      "id": "D48",
      "type": "Branch",
      "section": "Stage 3 — second deposit",
+     "purpose": "For non-clickers: checks whether they opened. Non-openers leave.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -4473,6 +4651,7 @@ window.JOURNEY_DATA = {
      "id": "D49",
      "type": "Send",
      "section": "Stage 3 — second deposit",
+     "purpose": "For openers: risk habits for the second month.",
      "config": {
       "raw": "**S17-E2b** (risk habits for your second month)",
       "template": "S17-E2b",
@@ -4490,6 +4669,7 @@ window.JOURNEY_DATA = {
      "id": "D50",
      "type": "Wait for",
      "section": "Stage 3 — second deposit",
+     "purpose": "Waits a week for a deposit. A deposit ends the journey.",
      "config": {
       "raw": "lastDepositDate in last 1 day · give up after 7 days",
       "mode": "for",
@@ -4521,6 +4701,7 @@ window.JOURNEY_DATA = {
      "id": "D51",
      "type": "Call task",
      "section": "Stage 3 — second deposit",
+     "purpose": "About three weeks after the first deposit, trading but no second deposit: asks the account manager to call.",
      "config": {
       "raw": "“First deposit about 3 weeks ago, trading, no second deposit — call”",
       "note": "First deposit about 3 weeks ago, trading, no second deposit — call"
@@ -4536,6 +4717,7 @@ window.JOURNEY_DATA = {
      "id": "D99",
      "type": "Exit",
      "section": "Stage 3 — second deposit",
+     "purpose": "End of the journey. Day 45 also ends it from any step; journey E or C takes over.",
      "config": {
       "raw": "—"
      },
@@ -4622,6 +4804,7 @@ window.JOURNEY_DATA = {
      "id": "E1",
      "type": "Trigger",
      "section": "",
+     "purpose": "Starts for clients past their first 45 days who traded in the last 14 days. It restarts every month while they keep trading.",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -4637,6 +4820,7 @@ window.JOURNEY_DATA = {
      "id": "E2",
      "type": "Branch",
      "section": "",
+     "purpose": "Safety check before anything is sent: anyone the CRM marks as not to be contacted (do not contact, fraud, under age, duplicate, wrong details, closed, not interested) leaves here.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery · Not Interested",
       "match": "any",
@@ -4707,6 +4891,7 @@ window.JOURNEY_DATA = {
      "id": "E3",
      "type": "Branch",
      "section": "",
+     "purpose": "Skips clients who are in the withdrawal or failed-deposit journeys right now, so nobody gets two money emails in the same week.",
      "config": {
       "raw": "Any: tags contains `withdrew` · tags contains `deposit-failed`",
       "match": "any",
@@ -4742,6 +4927,7 @@ window.JOURNEY_DATA = {
      "id": "E4",
      "type": "Wait for",
      "section": "",
+     "purpose": "Watches for up to four weeks for the moment the balance falls to $10 or less with no open trades, meaning they have nothing left to trade with.",
      "config": {
       "raw": "All: MT5 balance ≤ 10 · MT5 open positions ≤ 0 — give up after 4 weeks",
       "mode": "for",
@@ -4780,6 +4966,7 @@ window.JOURNEY_DATA = {
      "id": "E5",
      "type": "Branch",
      "section": "",
+     "purpose": "If they deposited in the last three days, they have already topped up and need no email.",
      "config": {
       "raw": "lastDepositDate in last 3 days",
       "match": "all",
@@ -4808,6 +4995,7 @@ window.JOURNEY_DATA = {
      "id": "E6",
      "type": "Wait",
      "section": "",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -4825,6 +5013,7 @@ window.JOURNEY_DATA = {
      "id": "E7",
      "type": "Send",
      "section": "",
+     "purpose": "Your trading balance is almost empty.",
      "config": {
       "raw": "**S19-E1** (your trading balance is almost empty)",
       "template": "S19-E1",
@@ -4842,6 +5031,7 @@ window.JOURNEY_DATA = {
      "id": "E8",
      "type": "Wait for",
      "section": "",
+     "purpose": "Waits up to three days for a deposit.",
      "config": {
       "raw": "lastDepositDate in last 1 day · give up after 3 days",
       "mode": "for",
@@ -4873,6 +5063,7 @@ window.JOURNEY_DATA = {
      "id": "E9",
      "type": "Send",
      "section": "",
+     "purpose": "They deposited: confirms the funds arrived and gives three habits for the week ahead.",
      "config": {
       "raw": "**S19-E2a** (funds received: three habits for the week ahead)",
       "template": "S19-E2a",
@@ -4890,6 +5081,7 @@ window.JOURNEY_DATA = {
      "id": "E10",
      "type": "Branch",
      "section": "",
+     "purpose": "No deposit: checks whether they clicked.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -4918,6 +5110,7 @@ window.JOURNEY_DATA = {
      "id": "E11",
      "type": "Send",
      "section": "",
+     "purpose": "For clickers: trading at a smaller scale with a Cent account.",
      "config": {
       "raw": "**S19-E2b** (trading at a smaller scale: the Cent account)",
       "template": "S19-E2b",
@@ -4935,6 +5128,7 @@ window.JOURNEY_DATA = {
      "id": "E12",
      "type": "Branch",
      "section": "",
+     "purpose": "For non-clickers: checks whether they opened. Non-openers leave.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -4963,6 +5157,7 @@ window.JOURNEY_DATA = {
      "id": "E13",
      "type": "Send",
      "section": "",
+     "purpose": "For openers: a free session on managing trading risk.",
      "config": {
       "raw": "**S19-E2c** (free session: trading risk management)",
       "template": "S19-E2c",
@@ -4980,6 +5175,7 @@ window.JOURNEY_DATA = {
      "id": "E99",
      "type": "Exit",
      "section": "",
+     "purpose": "End of this month’s watch. It starts again after 30 days if they are still trading.",
      "config": {
       "raw": "—"
      },
@@ -5057,6 +5253,7 @@ window.JOURNEY_DATA = {
      "id": "F1",
      "type": "Trigger",
      "section": "",
+     "purpose": "Starts when a client has withdrawn in the last three weeks and not deposited since (the CRM adds the ‘withdrew’ tag).",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -5072,6 +5269,7 @@ window.JOURNEY_DATA = {
      "id": "F2",
      "type": "Branch",
      "section": "",
+     "purpose": "Safety check before anything is sent: anyone the CRM marks as not to be contacted (do not contact, fraud, under age, duplicate, wrong details, closed, not interested) leaves here.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery · Not Interested",
       "match": "any",
@@ -5142,6 +5340,7 @@ window.JOURNEY_DATA = {
      "id": "F3",
      "type": "Wait",
      "section": "",
+     "purpose": "A week of silence: we do not email straight after someone takes money out. A deposit during the week ends the journey.",
      "config": {
       "raw": "7 days",
       "mode": "duration",
@@ -5159,6 +5358,7 @@ window.JOURNEY_DATA = {
      "id": "F4",
      "type": "Wait",
      "section": "",
+     "purpose": "Holds the person until 07:00 so the email lands in the morning, not at whatever hour they arrived.",
      "config": {
       "raw": "Until 07:00, any day",
       "mode": "until",
@@ -5176,6 +5376,7 @@ window.JOURNEY_DATA = {
      "id": "F5",
      "type": "Branch",
      "section": "",
+     "purpose": "Is there still money in the account? That decides which email they get.",
      "config": {
       "raw": "MT5 balance > 0",
       "match": "all",
@@ -5204,6 +5405,7 @@ window.JOURNEY_DATA = {
      "id": "F6",
      "type": "Send",
      "section": "",
+     "purpose": "Some money left: the withdrawal is complete, and here is the week ahead.",
      "config": {
       "raw": "**S18-E1a** (withdrawal complete: here’s the week ahead)",
       "template": "S18-E1a",
@@ -5221,6 +5423,7 @@ window.JOURNEY_DATA = {
      "id": "F7",
      "type": "Send",
      "section": "",
+     "purpose": "Account empty: the withdrawal is complete, and the account stays open.",
      "config": {
       "raw": "**S18-E1b** (withdrawal complete: your account stays open)",
       "template": "S18-E1b",
@@ -5238,6 +5441,7 @@ window.JOURNEY_DATA = {
      "id": "F8",
      "type": "Wait for",
      "section": "",
+     "purpose": "Waits up to five days for a click.",
      "config": {
       "raw": "Clicked the last email · give up after 5 days",
       "mode": "for",
@@ -5269,6 +5473,7 @@ window.JOURNEY_DATA = {
      "id": "F10",
      "type": "Send",
      "section": "",
+     "purpose": "For clickers: three things worth knowing before trading again.",
      "config": {
       "raw": "**S18-E2a** (ready to trade again? three things worth knowing)",
       "template": "S18-E2a",
@@ -5286,6 +5491,7 @@ window.JOURNEY_DATA = {
      "id": "F11",
      "type": "Call task",
      "section": "",
+     "purpose": "Clicked but no new deposit: asks the account manager to call.",
      "config": {
       "raw": "“Withdrew, engaged, no new deposit — call”",
       "note": "Withdrew, engaged, no new deposit — call"
@@ -5301,6 +5507,7 @@ window.JOURNEY_DATA = {
      "id": "F12",
      "type": "Branch",
      "section": "",
+     "purpose": "For non-clickers: checks whether they opened. Non-openers leave.",
      "config": {
       "raw": "Opened the last email",
       "match": "all",
@@ -5329,6 +5536,7 @@ window.JOURNEY_DATA = {
      "id": "F13",
      "type": "Send",
      "section": "",
+     "purpose": "For openers: asks how the withdrawal went, to hear about any problem.",
      "config": {
       "raw": "**S18-E2b** (how was your withdrawal?)",
       "template": "S18-E2b",
@@ -5346,6 +5554,7 @@ window.JOURNEY_DATA = {
      "id": "F99",
      "type": "Exit",
      "section": "",
+     "purpose": "End of the journey. A deposit removes the tag and also ends it from any step.",
      "config": {
       "raw": "—"
      },
@@ -5419,6 +5628,7 @@ window.JOURNEY_DATA = {
      "id": "G1",
      "type": "Trigger",
      "section": "",
+     "purpose": "Starts when a deposit is declined (the CRM adds the ‘deposit-failed’ tag).",
      "config": {
       "raw": "CRM segment (automated)",
       "source": "CRM segment (automated)"
@@ -5434,6 +5644,7 @@ window.JOURNEY_DATA = {
      "id": "G2",
      "type": "Branch",
      "section": "",
+     "purpose": "Safety check, as in the other journeys, but ‘Not Interested’ stays in: someone who has just tried to deposit is clearly interested.",
      "config": {
       "raw": "Any: status equals DNC · fraudster · Under Age · Duplicate · Wrong Info · Cemetery",
       "match": "any",
@@ -5497,6 +5708,7 @@ window.JOURNEY_DATA = {
      "id": "G3",
      "type": "Wait",
      "section": "",
+     "purpose": "Waits one hour, enough time for the client to try again on their own.",
      "config": {
       "raw": "1 hour",
       "mode": "duration",
@@ -5514,6 +5726,7 @@ window.JOURNEY_DATA = {
      "id": "G4",
      "type": "Branch",
      "section": "",
+     "purpose": "If a deposit went through today, the problem is solved and the journey ends without an email.",
      "config": {
       "raw": "lastDepositDate is today",
       "match": "all",
@@ -5542,6 +5755,7 @@ window.JOURNEY_DATA = {
      "id": "G5",
      "type": "Send",
      "section": "",
+     "purpose": "Your deposit did not go through: the common reasons and how to fix them.",
      "config": {
       "raw": "**S20-E1** (your deposit didn’t go through)",
       "template": "S20-E1",
@@ -5559,6 +5773,7 @@ window.JOURNEY_DATA = {
      "id": "G6",
      "type": "Wait",
      "section": "",
+     "purpose": "Two days for them to try again.",
      "config": {
       "raw": "2 days",
       "mode": "duration",
@@ -5576,6 +5791,7 @@ window.JOURNEY_DATA = {
      "id": "G7",
      "type": "Branch",
      "section": "",
+     "purpose": "Checks whether they clicked the help email.",
      "config": {
       "raw": "Clicked the last email",
       "match": "all",
@@ -5604,6 +5820,7 @@ window.JOURNEY_DATA = {
      "id": "G8",
      "type": "Call task",
      "section": "",
+     "purpose": "They clicked, so they are trying, but the deposit still has not worked: asks payments support to call.",
      "config": {
       "raw": "“Deposit declined, client retried without success — payments support to call”",
       "note": "Deposit declined, client retried without success — payments support to call"
@@ -5619,6 +5836,7 @@ window.JOURNEY_DATA = {
      "id": "G9",
      "type": "Send",
      "section": "",
+     "purpose": "For clickers: more help with funding the account.",
      "config": {
       "raw": "**S20-E2a** (still having trouble funding your account?)",
       "template": "S20-E2a",
@@ -5636,6 +5854,7 @@ window.JOURNEY_DATA = {
      "id": "G10",
      "type": "Send",
      "section": "",
+     "purpose": "For non-clickers: a reminder that the deposit was not completed.",
      "config": {
       "raw": "**S20-E2b** (reminder: your deposit wasn’t completed)",
       "template": "S20-E2b",
@@ -5653,6 +5872,7 @@ window.JOURNEY_DATA = {
      "id": "G99",
      "type": "Exit",
      "section": "",
+     "purpose": "End of the journey. A successful deposit removes the tag and also ends it from any step.",
      "config": {
       "raw": "—"
      },
@@ -6682,7 +6902,7 @@ window.JOURNEY_DATA = {
    "sourcesHtml": "<ul><li>Transaction and deposit triggers, tag actions: CRM help centre, article 679.</li><li>Payment methods by region: tentrade.com FAQ.</li><li>Automation Rules use slots; two are needed here.</li></ul>"
   }
  ],
- "overviewHtml": "<p>Seven Voyager journeys for people who are already TenTrade clients, built around three goals: a first deposit, depositing again after stopping, and continuing to deposit. Each file is a step-by-step build sheet: segment, settings, every step with its configuration and connections, and which email each Send step uses. None is built in Voyager yet and no copy is approved.</p>\n<p>Third version, 2026-10-03. The second version had twenty single-purpose journeys, one per stage. Reading the builder's options showed that most of them were the same people at different moments, and that one journey with condition waits and an entry router can follow a person through all of those moments. The twenty are now <b>email sets</b> in <code>../sets/</code>; the journeys reuse their emails by ID (for example S03-E1).</p>\n<p>The builder options this design relies on are in <code>content/research/voyager-journey-builder-reference-2026-10-03.md</code>.</p>\n<h3>The seven journeys</h3>\n<div class=\"tbl\"><table><thead><tr><th>Journey</th><th>Goal</th><th>Segment (all with Lead = No)</th><th>Re-entry</th><th>Steps</th><th>Emails</th><th>Replaces</th></tr></thead><tbody><tr><td><a href=\"#j/A\">A — Activation</a></td><td>First deposit</td><td>First deposit Never · Registered last 90 days</td><td>Once ever</td><td>59</td><td>21</td><td>01–04, 06–08</td></tr><tr><td><a href=\"#j/B\">B — Never-funded backlog</a></td><td>First deposit</td><td>Verified · First deposit Never · Registered over 90 days ago</td><td>After 180 days</td><td>21</td><td>8</td><td>05</td></tr><tr><td><a href=\"#j/C\">C — Win-back</a></td><td>Deposit again</td><td>First deposit over 30 days ago · no deposit and no trade in 30 days</td><td>After 365 days</td><td>61</td><td>20</td><td>09–14</td></tr><tr><td><a href=\"#j/D\">D — New depositor</a></td><td>Keep depositing</td><td>First deposit last 45 days</td><td>Once ever</td><td>41</td><td>13</td><td>15–17</td></tr><tr><td><a href=\"#j/E\">E — Active trader, low balance</a></td><td>Keep depositing</td><td>First deposit over 45 days ago · traded in last 14 days</td><td>After 30 days</td><td>14</td><td>4</td><td>19</td></tr><tr><td><a href=\"#j/F\">F — After a withdrawal</a></td><td>Keep depositing</td><td>Tag <code>withdrew</code></td><td>After 21 days</td><td>13</td><td>4</td><td>18</td></tr><tr><td><a href=\"#j/G\">G — Failed deposit</a></td><td>First deposit and keep depositing</td><td>Tag <code>deposit-failed</code></td><td>After 3 days</td><td>11</td><td>3</td><td>20</td></tr></tbody></table></div>\n<h3>How a client moves between them</h3>\n<div class=\"tbl\"><table><thead><tr><th>Client's situation</th><th>Journey</th></tr></thead><tbody><tr><td>Registered, not yet deposited, up to day 90</td><td>A</td></tr><tr><td>Still not deposited after day 90</td><td>B (twice a year)</td></tr><tr><td>Just made a first deposit, first 45 days</td><td>D</td></tr><tr><td>Trading regularly after day 45</td><td>E (a monthly watch for a low balance)</td></tr><tr><td>Withdrew and no deposit within a week</td><td>F, alongside whatever else applies</td></tr><tr><td>A deposit was declined</td><td>G, alongside whatever else applies</td></tr><tr><td>Stopped depositing and trading for 30 days</td><td>C, for up to a year</td></tr></tbody></table></div>\n<p>Each journey's segment describes a problem that the goal removes: a first deposit takes a person out of A and B, a deposit or a trade takes them out of C, a deposit removes the tags behind F and G. With \"exit off-audience\" on, reaching the goal ends the journey from any step.</p>\n<h3>Why seven and not fewer</h3>\n<p>A journey must stay separate from another when the builder forces it:</p>\n<ul><li><b>Different re-entry.</b> Re-entry is one setting per journey. A and D run once; B, C, E, F and G</li></ul>\n<p>repeat on different cycles.</p>\n<ul><li><b>Different entry signal.</b> F and G start from CRM tags. The audience form combines filters with</li></ul>\n<p>AND only, so \"tag present\" cannot be added as an alternative entry to a date-based segment.</p>\n<ul><li><b>A backlog that needs batching.</b> B holds a large set of long-registered clients that must be</li></ul>\n<p>released by country.</p>\n<p>Everything else that shared a population was merged.</p>\n<h3>What changed from twenty single-purpose journeys</h3>\n<div class=\"tbl\"><table><thead><tr><th>Builder option</th><th>How the merged journeys use it</th></tr></thead><tbody><tr><td>Steps can receive many connections</td><td>An entry router drops each person at the right stage; branches re-join, so shared steps exist once</td></tr><tr><td>Wait for a condition, with a deadline</td><td>The journey reacts on the day a client verifies, deposits, trades or logs in, instead of after a fixed wait</td></tr><tr><td>Date conditions relative to today</td><td>\"Wait for: firstDepositDate over 14 days ago\" starts a stage on the same lifecycle day for everyone</td></tr><tr><td>Wait until a time</td><td>Each stage's first email goes at 07:00 (UTC, to be confirmed), whatever time the person arrived</td></tr><tr><td>Branch on MT5 balance and open positions</td><td>The same journey speaks differently to clients with and without money left</td></tr><tr><td>Branch on opened / clicked the last email</td><td>Non-openers skip later emails; clickers get the practical follow-up and, where it matters, a call</td></tr><tr><td>A/B split with auto-winner</td><td>A subject-line test on the first email of A, B and D</td></tr><tr><td>Call task</td><td>Every journey ends high-intent cases with a task for the account manager</td></tr></tbody></table></div>\n<h3>Rules for every journey</h3>\n<ul><li><b>Trigger:</b> \"CRM segment (automated)\".</li><li><b>Exit off-audience on; exit on convert off</b> until TenTrade confirms what a conversion is.</li><li><b>Guard first.</b> The step after the trigger exits clients whose CRM status is DNC, fraudster,</li></ul>\n<p>Under Age, Duplicate, Wrong Info, Cemetery or Not Interested (journey G keeps Not Interested in).</p>\n<ul><li><b>Send frequency follows re-entry.</b> Journeys that run once use \"Once ever\". Journeys with</li></ul>\n<p>re-entry use \"Every N days\" with N equal to the re-entry period; \"Once ever\" there could mean the emails never send a second time.</p>\n<ul><li><b>Footer, tracking tags and claims</b> follow the conventions in <code>../sets/INDEX.md</code>.</li></ul>\n<h3>Needed in the CRM</h3>\n<div class=\"tbl\"><table><thead><tr><th>Tag</th><th>Rule</th><th>Trigger</th><th>Action</th></tr></thead><tbody><tr><td><code>src-meta</code></td><td>A-R1</td><td>User registered, condition UTM source equals \"meta\"</td><td>Add tag</td></tr><tr><td><code>withdrew</code></td><td>F-R1</td><td>Withdrawal approved</td><td>Add tag</td></tr><tr><td></td><td>F-R2</td><td>Withdrawal approved</td><td>Run Scheduler → after 21 days, remove tag</td></tr><tr><td></td><td>F-R3</td><td>Deposit approved</td><td>Remove tag</td></tr><tr><td><code>deposit-failed</code></td><td>G-R1</td><td>Transaction declined, condition: a deposit</td><td>Add tag</td></tr><tr><td></td><td>G-R2</td><td>Transaction declined, same condition</td><td>Run Scheduler → after 3 days, remove tag</td></tr><tr><td></td><td>G-R3</td><td>Deposit approved</td><td>Remove tag</td></tr></tbody></table></div>\n<p>Seven rules, two of them with a scheduled rule inside. Each normal rule and each scheduled rule uses an automation slot.</p>\n<h3>Before any journey is built</h3>\n<ol><li><b>Answer the open questions</b> in section 5 of the builder reference, especially: how often segments and condition waits are re-checked; the time zone of \"Wait until\"; whether \"Once ever\" and \"Every N days\" count per step or per template; what a conversion is; and whether MT5 balance is reported in dollars for Cent accounts.</li><li><b>Compliance</b> approves the email sets and the three new subject variants.</li><li><b>The CRM rules</b> above are created and checked on a test profile.</li><li><b>Build order:</b> G (small, highest intent), then D and A, then E and F, then C in its three launch steps, then B in country batches.</li><li><b>Each journey</b> is built as a draft, run through \"Predict flow\", tested to the test address with \"Test full journey\", and reviewed before activation.</li></ol>",
+ "overviewHtml": "<p>Seven Voyager journeys for people who are already TenTrade clients, built around three goals: a first deposit, depositing again after stopping, and continuing to deposit. Each file is a step-by-step build sheet: segment, settings, every step with its configuration and connections, which email each Send step uses, and a plain-language line on what each step is for. None is built in Voyager yet and no copy is approved.</p>\n<p>Third version, 2026-10-03. The second version had twenty single-purpose journeys, one per stage. Reading the builder’s options showed that most of them were the same people at different moments, and that one journey with condition waits and an entry router can follow a person through all of those moments. The twenty are now <b>email sets</b> in <code>../sets/</code>; the journeys reuse their emails by ID (for example S03-E1).</p>\n<p>The builder options this design relies on are in <code>content/research/voyager-journey-builder-reference-2026-10-03.md</code>.</p>\n<h3>The seven journeys</h3>\n<div class=\"tbl\"><table><thead><tr><th>Journey</th><th>Goal</th><th>Segment (all with Lead = No)</th><th>Re-entry</th><th>Steps</th><th>Emails</th><th>Replaces</th></tr></thead><tbody><tr><td><a href=\"#j/A\">A — Activation</a></td><td>First deposit</td><td>First deposit Never · Registered last 90 days</td><td>Once ever</td><td>59</td><td>21</td><td>01–04, 06–08</td></tr><tr><td><a href=\"#j/B\">B — Never-funded backlog</a></td><td>First deposit</td><td>Verified · First deposit Never · Registered over 90 days ago</td><td>After 180 days</td><td>21</td><td>8</td><td>05</td></tr><tr><td><a href=\"#j/C\">C — Win-back</a></td><td>Deposit again</td><td>First deposit over 30 days ago · no deposit and no trade in 30 days</td><td>After 365 days</td><td>61</td><td>20</td><td>09–14</td></tr><tr><td><a href=\"#j/D\">D — New depositor</a></td><td>Keep depositing</td><td>First deposit last 45 days</td><td>Once ever</td><td>41</td><td>13</td><td>15–17</td></tr><tr><td><a href=\"#j/E\">E — Active trader, low balance</a></td><td>Keep depositing</td><td>First deposit over 45 days ago · traded in last 14 days</td><td>After 30 days</td><td>14</td><td>4</td><td>19</td></tr><tr><td><a href=\"#j/F\">F — After a withdrawal</a></td><td>Keep depositing</td><td>Tag <code>withdrew</code></td><td>After 21 days</td><td>13</td><td>4</td><td>18</td></tr><tr><td><a href=\"#j/G\">G — Failed deposit</a></td><td>First deposit and keep depositing</td><td>Tag <code>deposit-failed</code></td><td>After 3 days</td><td>11</td><td>3</td><td>20</td></tr></tbody></table></div>\n<h3>How a client moves between them</h3>\n<div class=\"tbl\"><table><thead><tr><th>Client’s situation</th><th>Journey</th></tr></thead><tbody><tr><td>Registered, not yet deposited, up to day 90</td><td>A</td></tr><tr><td>Still not deposited after day 90</td><td>B (twice a year)</td></tr><tr><td>Just made a first deposit, first 45 days</td><td>D</td></tr><tr><td>Trading regularly after day 45</td><td>E (a monthly watch for a low balance)</td></tr><tr><td>Withdrew and no deposit within a week</td><td>F, alongside whatever else applies</td></tr><tr><td>A deposit was declined</td><td>G, alongside whatever else applies</td></tr><tr><td>Stopped depositing and trading for 30 days</td><td>C, for up to a year</td></tr></tbody></table></div>\n<p>Each journey’s segment describes a problem that the goal removes: a first deposit takes a person out of A and B, a deposit or a trade takes them out of C, a deposit removes the tags behind F and G. With “exit off-audience” on, reaching the goal ends the journey from any step.</p>\n<h3>Why seven and not fewer</h3>\n<p>A journey must stay separate from another when the builder forces it:</p>\n<ul><li><b>Different re-entry.</b> Re-entry is one setting per journey. A and D run once; B, C, E, F and G</li></ul>\n<p>repeat on different cycles.</p>\n<ul><li><b>Different entry signal.</b> F and G start from CRM tags. The audience form combines filters with</li></ul>\n<p>AND only, so “tag present” cannot be added as an alternative entry to a date-based segment.</p>\n<ul><li><b>A backlog that needs batching.</b> B holds a large set of long-registered clients that must be</li></ul>\n<p>released by country.</p>\n<p>Everything else that shared a population was merged.</p>\n<h3>What changed from twenty single-purpose journeys</h3>\n<div class=\"tbl\"><table><thead><tr><th>Builder option</th><th>How the merged journeys use it</th></tr></thead><tbody><tr><td>Steps can receive many connections</td><td>An entry router drops each person at the right stage; branches re-join, so shared steps exist once</td></tr><tr><td>Wait for a condition, with a deadline</td><td>The journey reacts on the day a client verifies, deposits, trades or logs in, instead of after a fixed wait</td></tr><tr><td>Date conditions relative to today</td><td>“Wait for: firstDepositDate over 14 days ago” starts a stage on the same lifecycle day for everyone</td></tr><tr><td>Wait until a time</td><td>Each stage’s first email goes at 07:00 (UTC, to be confirmed), whatever time the person arrived</td></tr><tr><td>Branch on MT5 balance and open positions</td><td>The same journey speaks differently to clients with and without money left</td></tr><tr><td>Branch on opened / clicked the last email</td><td>Non-openers skip later emails; clickers get the practical follow-up and, where it matters, a call</td></tr><tr><td>A/B split with auto-winner</td><td>A subject-line test on the first email of A, B and D</td></tr><tr><td>Call task</td><td>Every journey ends high-intent cases with a task for the account manager</td></tr></tbody></table></div>\n<h3>Rules for every journey</h3>\n<ul><li><b>Trigger:</b> “CRM segment (automated)”.</li><li><b>Exit off-audience on; exit on convert off</b> until TenTrade confirms what a conversion is.</li><li><b>Guard first.</b> The step after the trigger exits clients whose CRM status is DNC, fraudster,</li></ul>\n<p>Under Age, Duplicate, Wrong Info, Cemetery or Not Interested (journey G keeps Not Interested in).</p>\n<ul><li><b>Send frequency follows re-entry.</b> Journeys that run once use “Once ever”. Journeys with</li></ul>\n<p>re-entry use “Every N days” with N equal to the re-entry period; “Once ever” there could mean the emails never send a second time.</p>\n<ul><li><b>Footer, tracking tags and claims</b> follow the conventions in <code>../sets/INDEX.md</code>.</li></ul>\n<h3>Needed in the CRM</h3>\n<div class=\"tbl\"><table><thead><tr><th>Tag</th><th>Rule</th><th>Trigger</th><th>Action</th></tr></thead><tbody><tr><td><code>src-meta</code></td><td>A-R1</td><td>User registered, condition UTM source equals “meta”</td><td>Add tag</td></tr><tr><td><code>withdrew</code></td><td>F-R1</td><td>Withdrawal approved</td><td>Add tag</td></tr><tr><td></td><td>F-R2</td><td>Withdrawal approved</td><td>Run Scheduler → after 21 days, remove tag</td></tr><tr><td></td><td>F-R3</td><td>Deposit approved</td><td>Remove tag</td></tr><tr><td><code>deposit-failed</code></td><td>G-R1</td><td>Transaction declined, condition: a deposit</td><td>Add tag</td></tr><tr><td></td><td>G-R2</td><td>Transaction declined, same condition</td><td>Run Scheduler → after 3 days, remove tag</td></tr><tr><td></td><td>G-R3</td><td>Deposit approved</td><td>Remove tag</td></tr></tbody></table></div>\n<p>Seven rules, two of them with a scheduled rule inside. Each normal rule and each scheduled rule uses an automation slot.</p>\n<h3>Before any journey is built</h3>\n<ol><li><b>Answer the open questions</b> in section 5 of the builder reference, especially: how often segments and condition waits are re-checked; the time zone of “Wait until”; whether “Once ever” and “Every N days” count per step or per template; what a conversion is; and whether MT5 balance is reported in dollars for Cent accounts.</li><li><b>Compliance</b> approves the email sets and the three new subject variants.</li><li><b>The CRM rules</b> above are created and checked on a test profile.</li><li><b>Build order:</b> G (small, highest intent), then D and A, then E and F, then C in its three launch steps, then B in country batches.</li><li><b>Each journey</b> is built as a draft, run through “Predict flow”, tested to the test address with “Test full journey”, and reviewed before activation.</li></ol>",
  "builderRefHtml": "<p># Voyager journey builder — every option, and what it allows</p>\n<p>Read on 2026-10-03 from the journey-builder code that PanUI serves to the browser (<code>assets/app.js</code>, the <code>voyager-journey</code> page module), checked against what the builder showed in the sandbox journey earlier the same day. The code shows every option the builder offers and how steps can be wired. It does not show how the server runs a journey; those points are listed at the end as checks.</p>\n<h3>1. Journey settings</h3>\n<div class=\"tbl\"><table><thead><tr><th>Setting</th><th>Options</th><th>Notes</th></tr></thead><tbody><tr><td>Audience</td><td>The shared audience form (19 filters, all combined with AND)</td><td>With the trigger “CRM segment (automated)”, this is the segment</td></tr><tr><td>Re-entry</td><td>Default · Once ever · After N days</td><td>“After N days” shows a days box. What “Default” does is not visible</td></tr><tr><td>Exit on convert</td><td>on / off</td><td>What counts as a conversion is not visible</td></tr><tr><td>Exit off-audience</td><td>on / off</td><td>Removes a person from the journey when they stop matching the audience</td></tr></tbody></table></div>\n<h3>2. Canvas and wiring</h3>\n<div class=\"tbl\"><table><thead><tr><th>Rule</th><th>Effect on design</th></tr></thead><tbody><tr><td>Each step has one input port, except Trigger (none)</td><td>—</td></tr><tr><td>Output ports: one for Send, Wait (duration or until), Webhook, Call task; <b>Y and N</b> for Branch and for Wait in “for a condition” mode; <b>A and B</b> for A/B split; none for Exit</td><td>Every decision is two-way; three-way routing is two Branch steps in a row</td></tr><tr><td>One connection per output port; drawing a new one replaces the old</td><td>—</td></tr><tr><td><b>A step can receive any number of connections</b></td><td>Paths can split and <b>re-join</b>, so shared steps are built once. An entry router can send people straight into the middle of a flow</td></tr><tr><td>The builder does not stop connections back to an earlier step (only to the step itself)</td><td>Loops can be drawn. How the engine runs them is not known; the designs here avoid loops</td></tr><tr><td>The Trigger step can be added more than once</td><td>How several triggers behave is not known; the designs use one</td></tr><tr><td>Duplicate copies a step with its settings; Delete (or the Delete key) removes it and its connections</td><td>—</td></tr></tbody></table></div>\n<h3>3. Steps</h3>\n<h4>Trigger</h4>\n<ul><li><b>Source:</b> “When an event happens” (the default on a new step) or “CRM segment (automated)”.</li><li><b>Events:</b> ten internal events — conversation created, message received, agent replied,</li></ul>\n<p>conversation status changed, conversation assigned, email sent, email failed, journey failing, journey webhook fired, call task created.</p>\n<ul><li><b>Qualifiers</b> (some events only): mailbox; status open or closed; assigned user; assigned group.</li></ul>\n<p>“is” or “is not”, combined with AND or OR.</p>\n<h4>Send email</h4>\n<ul><li><b>Channel:</b> Email only.</li><li><b>Template:</b> any saved template.</li><li><b>Frequency:</b> “Once ever” or “Every N days” (N defaults to 7). People skipped by the frequency</li></ul>\n<p>rule or by the suppression list are counted as “skipped” in Predict flow.</p>\n<ul><li><b>Test this email</b> sends that step’s template to a typed address; tests ignore the frequency rule.</li></ul>\n<h4>Wait — three modes</h4>\n<div class=\"tbl\"><table><thead><tr><th>Mode</th><th>Settings</th><th>Outputs</th></tr></thead><tbody><tr><td>For a duration</td><td>Amount; minutes / hours / days / weeks</td><td>One</td></tr><tr><td>Until a time</td><td>Time of day (default 09:00); weekday: any day or Mon–Sun</td><td>One</td></tr><tr><td><b>For a condition</b></td><td>Match All or Any; any number of conditions (same fields and operators as Branch); give up after an amount in minutes / hours / days / weeks (default 3 days)</td><td><b>Y</b> = condition met before the deadline; <b>N</b> = timed out</td></tr></tbody></table></div>\n<p>“For a condition” is the most useful step for merging journeys. It holds a person until something happens, such as a deposit, a login, a click or a status change, and reacts as soon as it does, instead of waiting a fixed time and checking afterwards.</p>\n<h4>Branch</h4>\n<ul><li><b>Match:</b> All (AND) or Any (OR) over any number of conditions. NOT exists only as the “not</li></ul>\n<p>equals” and “is empty” operators.</p>\n<ul><li><b>Outputs:</b> Y = matches, N = does not.</li></ul>\n<p><b>Fields available in Branch and in Wait-for-a-condition</b></p>\n<div class=\"tbl\"><table><thead><tr><th>Family</th><th>Fields</th></tr></thead><tbody><tr><td>This journey’s email activity (yes/no)</td><td>Received any email (this journey) · Opened the last email · Clicked the last email</td></tr><tr><td>Trading platform (number)</td><td>MT5 balance · MT5 open positions</td></tr><tr><td>CRM, dates</td><td>registrationDate · promotedToClientAt · firstDepositDate · lastDepositDate · lastTradedAt · lastLoginDate · birthDate · updatedAt</td></tr><tr><td>CRM, yes/no</td><td>verified · lead · emailVerified · phoneVerified · enabled · isIb · isTrader · testProfile · pep · canCreateIbLinks · canRequestIb</td></tr><tr><td>CRM, text</td><td>status · secondaryStatus · tradingStatus · tags · language · country · nationality · partnerId · masterPartnerId · managerId · source · entryPoint · referrer · clientType · riskLevel · riskCategorization · mifidCategorization · and about 40 more (names, address, IDs, tax and company fields)</td></tr></tbody></table></div>\n<p>Not available inside a journey: UTM fields, deposit amounts, deposit or withdrawal counts, withdrawal dates, account types, accepted documents. Those reach a journey only as a CRM tag.</p>\n<p><b>Operators by field type</b></p>\n<div class=\"tbl\"><table><thead><tr><th>Type</th><th>Operators</th><th>Value</th></tr></thead><tbody><tr><td>Date</td><td>is today · is yesterday · in last N days · over N days ago · is on · is before · is after · is set · is empty</td><td>N days (minimum 1), or a fixed date</td></tr><tr><td>Yes/no</td><td>is true · is false · is set · is empty</td><td>—</td></tr><tr><td>Number</td><td>&gt; · ≥ · &lt; · ≤ · equals · not equals</td><td>A number</td></tr><tr><td>Text</td><td>equals · not equals · contains · is set · is empty</td><td>Text</td></tr></tbody></table></div>\n<p>Two consequences:</p>\n<ul><li><b>Relative-time waits.</b> Date conditions are relative to today, so “Wait for: firstDepositDate</li></ul>\n<p>over 14 days ago” holds a person until two weeks after their first deposit, whenever they entered.</p>\n<ul><li><b>Text “equals” on tags fails for anyone with more than one tag.</b> Use “contains”, with tag names</li></ul>\n<p>that are not parts of other tag names.</p>\n<h4>A/B split</h4>\n<ul><li><b>% to variant A:</b> 0–100; B gets the rest. Both outputs must be connected.</li><li><b>Auto-winner:</b> off, best open rate, or best click rate.</li><li><b>Minimum sends per arm</b> before a winner is declared (at least 10; default 50).</li><li>Once a winner is declared it is shown on the step and can be cleared to test again. Whether</li></ul>\n<p>later entrants then all go to the winner is not shown in the code.</p>\n<h4>Webhook</h4>\n<ul><li>One setting: a label. Emits the event <code>voyager.journey.webhook</code>; an admin must subscribe an</li></ul>\n<p>outbound webhook to it before anything leaves PanUI. The same event can trigger another journey.</p>\n<h4>Call task</h4>\n<ul><li>One setting: a note. Adds the person to the CRM’s call-task list, visible to the managers who can</li></ul>\n<p>see that client.</p>\n<h4>Exit</h4>\n<ul><li>Ends the journey for the person.</li></ul>\n<h3>4. Monitoring and testing</h3>\n<div class=\"tbl\"><table><thead><tr><th>Tool</th><th>What it shows</th></tr></thead><tbody><tr><td>Step counters</td><td>Per step: how many people reached it, and how many are waiting there now</td></tr><tr><td>Predict flow</td><td>A hypothetical walk of the saved audience: about how many reach each step, and for Send steps how many would get the email and how many would be skipped</td></tr><tr><td>Test this email</td><td>One Send step’s template to a typed address</td></tr><tr><td>Test full journey</td><td>Every email in the journey to a typed address</td></tr></tbody></table></div>\n<h3>5. What the code does not show — to confirm before building</h3>\n<div class=\"tbl\"><table><thead><tr><th>#</th><th>Question</th><th>Why it matters</th><th>How to find out</th></tr></thead><tbody><tr><td>1</td><td>How often is a segment re-checked, for entry and for “exit off-audience”?</td><td>Decides how soon a new client gets the first email, and whether someone who just deposited can still get one more</td><td>Ask the platform owner</td></tr><tr><td>2</td><td>How often is a “Wait for a condition” re-checked?</td><td>Decides how fast the journey reacts to a deposit or a login</td><td>Ask, or test with the internal test accounts</td></tr><tr><td>3</td><td>Which time zone does “Until a time” use?</td><td>Reports are in UTC; probably this too</td><td>Ask</td></tr><tr><td>4</td><td>Is “Once ever” counted per step, per template, or per journey, and does it reset on re-entry?</td><td>A journey with re-entry must not use “Once ever” if it resets nothing; a template used twice may be skipped the second time</td><td>Ask</td></tr><tr><td>5</td><td>What does re-entry “Default” mean?</td><td>—</td><td>Ask</td></tr><tr><td>6</td><td>What counts as a conversion for “exit on convert”?</td><td>If it means any deposit, it could end the new-depositor journey at once</td><td>Ask; until then leave it off and rely on “exit off-audience”</td></tr><tr><td>7</td><td>Are loops run, and how?</td><td>Would allow repeating sequences without re-entry</td><td>Test in the sandbox with internal accounts only</td></tr><tr><td>8</td><td>Does “Opened / Clicked the last email” mean the last email in this journey?</td><td>Assumed in every design</td><td>Ask</td></tr><tr><td>9</td><td>Can a person be in several journeys at once, and is there a cap across journeys?</td><td>Decides how strictly journeys must exclude each other</td><td>Ask</td></tr><tr><td>10</td><td>Is “MT5 balance” summed across accounts, and are Cent accounts converted from cents?</td><td>A $10 threshold would read 1,000 on a Cent account</td><td>Ask</td></tr></tbody></table></div>\n<h3>6. What this means for journey design</h3>\n<ol><li><b>Make the segment “still has the problem”.</b> With “exit off-audience” on, reaching the goal takes a person out of the segment and out of the journey, from any step. A first-deposit journey whose segment includes “First deposit: Never” stops the moment someone deposits.</li><li><b>One journey per population, not per stage.</b> People in the same population at different stages, for example one week or one month after registering, belong in one journey. A short entry router (Branch steps on dates or status) sends each person to the right point; re-joining connections let the stages share steps.</li><li><b>React instead of waiting.</b> Replace “Wait N days, then check” with “Wait for a condition, give up after N days”: wait for the deposit, the login, the verification or the click, and act as soon as it happens. A login during a quiet stretch becomes a reason to write that day.</li><li><b>Wait for dates, not durations, when timing is relative to an event.</b> “Wait for: firstDepositDate over 14 days ago” lines everyone up on the same lifecycle day.</li><li><b>Send at a fixed hour.</b> A “Wait until 07:00” before the first email of each stage makes sends land at the same time of day, whenever the person entered.</li><li><b>Keep separate journeys only where the builder forces it.</b> A separate journey is needed when the entry condition cannot be written as one AND-only segment, when the re-entry rule differs, or when a large backlog must be released in batches.</li><li><b>Test subject lines inside the journey</b> with an A/B split and auto-winner on the first email of each journey.</li></ol>",
  "conventionsHtml": "<ul><li><b>Merge tag:</b> <code>{{first_name}}</code>.</li><li><b>Footer:</b> logo, short risk warning, the regulated-entity line (Evalanch Ltd, Seychelles FSA</li></ul>\n<p>licence SD082), links to the legal documents, and <code>{{unsubscribe_url}}</code>.</p>\n<ul><li><b>Tracking tags on every link:</b> source <code>CRM</code>, medium <code>Email</code>, campaign named after the journey</li></ul>\n<p>(for example <code>JA_activation</code>), term the email ID (for example <code>S03-E1</code>), and a content label naming the link (<code>cta_main</code>, <code>logo</code>, <code>footer_legal</code>).</p>\n<ul><li><b>Claims.</b> Every product fact comes from tentrade.com as read on 2026-10-03 and is listed under</li></ul>\n<p>\"Sources\" in the set. No bonus, no deadline and no fund-safety statement is used.</p>\n<ul><li><b>Deposit requests carry a risk line:</b> \"Only deposit what you can afford to lose.\"</li></ul>"
 };
