@@ -74,13 +74,24 @@
     return '<a href="' + href + '" data-v="' + v + '" class="it"><span class="lt">' + mark + '</span><span><span class="t">' + esc(title) + '</span>' +
       (sub ? '<span class="s">' + esc(sub) + '</span>' : '') + '</span></a>';
   }
+  // Which sections are expanded. Each header toggles its own section; opening a
+  // page expands the section it belongs to. Remembered per browser when possible.
+  var EXPANDED = (function () { try { return JSON.parse(localStorage.getItem('ttrd_nav_open')) || {}; } catch (e) { return {}; } })();
+  var lastActive = null;
+  function saveExpanded() { try { localStorage.setItem('ttrd_nav_open', JSON.stringify(EXPANDED)); } catch (e) { /* private mode */ } }
+  function toggleSection(id) { EXPANDED[id] = !EXPANDED[id]; saveExpanded(); renderNav(); }
+  function setAllSections(open) { SECTIONS.forEach(function (sec) { EXPANDED[sec.id] = open; }); saveExpanded(); renderNav(); }
   function renderNav() {
     var act = activeSection();
-    var h = '<div class="brand"><b>TenTrade</b><small>CRM &amp; email · review hub</small></div>';
+    if (act !== lastActive) { EXPANDED[act] = true; lastActive = act; saveExpanded(); }
+    var allOpen = SECTIONS.every(function (sec) { return EXPANDED[sec.id]; });
+    var h = '<div class="brand"><b>TenTrade</b><small>CRM &amp; email · review hub</small></div>' +
+      '<button type="button" class="navall" data-nav-all="' + (allOpen ? '0' : '1') + '">' + (allOpen ? 'Collapse all' : 'Expand all') + '</button>';
     SECTIONS.forEach(function (sec) {
-      var on = sec.id === act;
-      h += '<a href="' + sectionHref(sec) + '" class="sec' + (on ? ' open' : '') + '" data-sec="' + esc(sec.id) + '"><span class="si">' + esc(sec.icon || '•') + '</span><span><span class="t">' + esc(sec.title) + '</span><span class="s">' + esc(sec.sub || '') + '</span></span></a>';
-      if (!on) { return; }
+      var open = !!EXPANDED[sec.id], cur = sec.id === act;
+      h += '<button type="button" class="sec' + (open ? ' open' : '') + (cur ? ' cur' : '') + '" data-toggle-sec="' + esc(sec.id) + '" aria-expanded="' + open + '" title="' + (open ? 'Collapse' : 'Expand') + ' ' + esc(sec.title) + '">' +
+        '<span class="si">' + esc(sec.icon || '•') + '</span><span class="sx"><span class="t">' + esc(sec.title) + '</span><span class="s">' + esc(sec.sub || '') + '</span></span><span class="chev" aria-hidden="true">▸</span></button>';
+      if (!open) { return; }
       h += '<div class="items">';
       if (sec.kind === 'journeys') {
         h += navItem('#overview', 'overview', '≡', 'Overview', 'Goals, hand-overs, CRM tags');
@@ -775,6 +786,10 @@
       if (em && D.emails[em[1]] && state.view !== 'sets') { openEmail(em[1]); return; }
       nav(href); return;
     }
+    var ts = t.closest('[data-toggle-sec]');
+    if (ts) { toggleSection(ts.dataset.toggleSec); return; }
+    var na = t.closest('[data-nav-all]');
+    if (na) { setAllSections(na.dataset.navAll === '1'); return; }
     var bd = t.closest('[data-bday]');
     if (bd) { nav('#p/birthday/' + bd.dataset.bday); return; }
     var goEl = t.closest('[data-go]');
@@ -841,6 +856,5 @@
     return document.querySelector('[data-comment-id="' + anchor + '"]');
   };
 
-  renderNav();
   route();
 })();

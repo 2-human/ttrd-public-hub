@@ -179,21 +179,27 @@ body.drawer-open .drawer{transform:none}
 @media(max-width:1180px){body.drawer-open main{margin-right:auto}}
 @media(max-width:900px){
   body{padding-left:0}
-  .nav{position:static;width:auto;flex-direction:row;align-items:center;overflow-x:auto;padding:10px}
-  .nav .brand{border:0;margin:0;padding:0 10px 0 0}
-  .nav .grp,.nav a .s,.nav .foot{display:none}
-  .nav a{white-space:nowrap}
+  .nav{position:static;width:auto;padding:10px 12px}
+  .nav .brand{padding-bottom:8px}
+  .nav .grp,.nav a .s,.nav button.sec .s,.nav .foot{display:none}
   main{padding:18px 14px 60px}
   :root{--drawer-w:100vw}
 }
 
 /* ---- section navigation ---- */
-.nav a.sec{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:10px;text-decoration:none;color:#e6e3ee;margin-top:2px}
-.nav a.sec:hover{background:var(--nav2)}
-.nav a.sec .si{flex:0 0 24px;height:24px;border-radius:7px;background:#2c2838;display:grid;place-items:center;font-size:13px}
-.nav a.sec.open{background:#221d2d}
-.nav a.sec.open .si{background:var(--brand)}
-.nav a.sec .t{font:700 13.5px/1.25 var(--body)}
+.nav button.sec{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:9px 10px;border:0;border-radius:10px;background:none;color:#e6e3ee;margin-top:2px;cursor:pointer;font:inherit}
+.nav button.sec:hover{background:var(--nav2)}
+.nav button.sec .si{flex:0 0 24px;height:24px;border-radius:7px;background:#2c2838;display:grid;place-items:center;font-size:13px}
+.nav button.sec .sx{flex:1;min-width:0}
+.nav button.sec.open{background:#221d2d}
+.nav button.sec.cur .si{background:var(--brand)}
+.nav button.sec .t{font:700 13.5px/1.25 var(--body);display:block}
+.nav button.sec .s{font-size:10.5px;line-height:1.35;color:#8f8b9e;display:block;margin-top:2px}
+.nav button.sec .chev{flex:0 0 14px;color:#8f8b9e;font-size:13px;line-height:24px;text-align:center;transition:transform .15s}
+.nav button.sec.open .chev{transform:rotate(90deg);color:#fff}
+.nav .navall{align-self:flex-end;background:none;border:1px solid #2c2838;color:#9a96a8;border-radius:7px;font:600 10.5px var(--body);padding:3px 8px;margin:0 2px 4px;cursor:pointer}
+.nav .navall:hover{color:#fff;border-color:#4a4458}
+@media(max-width:900px){.nav button.sec .s{display:none}.nav button.sec{padding:6px 8px;align-items:center}.nav button.sec .chev{line-height:1}}
 .nav .items{margin:2px 0 8px 12px;padding-left:8px;border-left:1px solid #2c2838}
 .nav .items a.it{padding:6px 9px}
 .nav .items .lt{flex:0 0 20px;height:20px;font-size:10.5px}
