@@ -1,7 +1,8 @@
-/* Voyager journeys prototype — renders window.JOURNEY_DATA (built by
- * tools/journey-prototype/build.py). Left: navigation. Main: the journey as a
- * map of builder steps, like Voyager's canvas. Right: the selected step's setup, as Voyager's
- * config panel would show it. Read-only: nothing here talks to Voyager. */
+/* TenTrade review hub — renders window.JOURNEY_DATA (built by
+ * tools/journey-prototype/build.py). Left: sections (planning, journeys, blasts,
+ * segments, calendar, strategy, reporting, PanUI). Main: a page, or a journey as a
+ * map of builder steps like Voyager's canvas. Right: a drawer with a step's setup
+ * or an email preview. Read-only: nothing here talks to Voyager. */
 (function () {
   'use strict';
   var D = window.JOURNEY_DATA;
@@ -22,7 +23,8 @@
   var GOAL_GROUPS = [
     ['First deposit', ['A', 'B', 'G']],
     ['Deposit again', ['C']],
-    ['Keep depositing', ['D', 'E', 'F']]
+    ['Keep depositing', ['D', 'E', 'F']],
+    ['Webinar follow-ups', ['H', 'I', 'J']]
   ];
   // Voyager's field labels, as the Branch / Wait-for field picker lists them.
   var FIELD_LABEL = {
@@ -38,7 +40,12 @@
   var byId = {};
   D.journeys.forEach(function (j) { byId[j.id] = j; });
 
-  var state = { view: 'overview', j: null, tab: 'flow', step: null, email: null };
+  // Hub pages from hub-pages.json, by id, with their section.
+  var PAGES = {}, SECTIONS = D.sections || [];
+  SECTIONS.forEach(function (sec) { sec.pages.forEach(function (pg) { PAGES[pg.id] = { page: pg, sec: sec }; }); });
+  var LANDING = PAGES[D.landing] ? '#p/' + D.landing : '#overview';
+
+  var state = { view: 'overview', j: null, tab: 'flow', step: null, email: null, page: null, sub: null };
 
   /* ---- review-widget integration ----
    * Every commentable element carries a stable data-comment-id. The ids encode
@@ -57,27 +64,51 @@
   function refreshReview() { if (window.__rwRefresh) { try { window.__rwRefresh(); } catch (e) { /* widget not ready */ } } }
 
   /* ------------------------------------------------------------ navigation */
+  // Sections are always listed; the active section opens to show its pages.
+  function activeSection() {
+    if (state.view === 'page') { return PAGES[state.page].sec.id; }
+    return 'journeys';
+  }
+  function sectionHref(sec) { return sec.kind === 'journeys' ? '#overview' : '#p/' + sec.pages[0].id; }
+  function navItem(href, v, mark, title, sub) {
+    return '<a href="' + href + '" data-v="' + v + '" class="it"><span class="lt">' + mark + '</span><span><span class="t">' + esc(title) + '</span>' +
+      (sub ? '<span class="s">' + esc(sub) + '</span>' : '') + '</span></a>';
+  }
   function renderNav() {
-    var h = '<div class="brand"><b>TenTrade</b><small>Voyager journeys · prototype</small></div>';
-    h += '<a href="#overview" data-v="overview"><span class="lt">≡</span><span><span class="t">Overview</span><span class="s">Goals, hand-overs, CRM tags</span></span></a>';
-    GOAL_GROUPS.forEach(function (g) {
-      h += '<div class="grp">' + esc(g[0]) + '</div>';
-      g[1].forEach(function (id) {
-        var j = byId[id]; if (!j) { return; }
-        var sends = j.steps.filter(function (s) { return s.type === 'Send'; }).length;
-        h += '<a href="#j/' + id + '" data-v="j/' + id + '"><span class="lt">' + id + '</span><span><span class="t">' + esc(j.name) +
-          '</span><span class="s">' + j.steps.length + ' steps · ' + sends + ' emails</span></span></a>';
-      });
+    var act = activeSection();
+    var h = '<div class="brand"><b>TenTrade</b><small>CRM &amp; email · review hub</small></div>';
+    SECTIONS.forEach(function (sec) {
+      var on = sec.id === act;
+      h += '<a href="' + sectionHref(sec) + '" class="sec' + (on ? ' open' : '') + '" data-sec="' + esc(sec.id) + '"><span class="si">' + esc(sec.icon || '•') + '</span><span><span class="t">' + esc(sec.title) + '</span><span class="s">' + esc(sec.sub || '') + '</span></span></a>';
+      if (!on) { return; }
+      h += '<div class="items">';
+      if (sec.kind === 'journeys') {
+        h += navItem('#overview', 'overview', '≡', 'Overview', 'Goals, hand-overs, CRM tags');
+        GOAL_GROUPS.forEach(function (g) {
+          h += '<div class="grp">' + esc(g[0]) + '</div>';
+          g[1].forEach(function (id) {
+            var j = byId[id]; if (!j) { return; }
+            var sends = j.steps.filter(function (x) { return x.type === 'Send'; }).length;
+            h += navItem('#j/' + id, 'j/' + id, id, j.name, j.steps.length + ' steps · ' + sends + ' emails');
+          });
+        });
+        h += '<div class="grp">Reference</div>';
+        h += navItem('#sets', 'sets', '✉', 'Email sets', 'All drafted copy, S01–S' + String(D.sets.length).padStart(2, '0'));
+        h += navItem('#builder', 'builder', '⚙', 'Builder options', 'What Voyager allows');
+      } else {
+        sec.pages.forEach(function (pg, i) {
+          h += navItem('#p/' + pg.id, 'p/' + pg.id, sec.pages.length > 1 ? String(i + 1) : (sec.icon || '•'), pg.title, pg.sub);
+        });
+      }
+      h += '</div>';
     });
-    h += '<div class="grp">Reference</div>';
-    h += '<a href="#sets" data-v="sets"><span class="lt">✉</span><span><span class="t">Email sets</span><span class="s">All drafted copy, S01–S20</span></span></a>';
-    h += '<a href="#builder" data-v="builder"><span class="lt">⚙</span><span><span class="t">Builder options</span><span class="s">What Voyager allows</span></span></a>';
-    h += '<div class="foot">Prototype · read-only<br>Built ' + esc(D.built) + ' from the journey docs.<br>Nothing here is live in Voyager.</div>';
+    h += '<div class="foot">Review hub · read-only<br>Built ' + esc(D.built) + ' from the project docs.<br>Nothing here is live in Voyager.</div>';
     $('#nav').innerHTML = h;
+    markNav();
   }
   function markNav() {
-    var key = state.view === 'journey' ? 'j/' + state.j : state.view;
-    Array.prototype.forEach.call(document.querySelectorAll('#nav a'), function (a) { a.classList.toggle('on', a.dataset.v === key); });
+    var key = state.view === 'journey' ? 'j/' + state.j : state.view === 'page' ? 'p/' + state.page : state.view;
+    Array.prototype.forEach.call(document.querySelectorAll('#nav a.it'), function (a) { a.classList.toggle('on', a.dataset.v === key); });
   }
 
   /* ------------------------------------------------------------- summaries */
@@ -119,7 +150,7 @@
   }
 
   function renderOverview() {
-    $('#main').innerHTML = header('TenTrade · Voyager', 'Client journeys', 'Seven journeys for people who are already TenTrade clients. Pick one on the left to see its steps; click any step to open its setup on the right.') +
+    $('#main').innerHTML = header('Journeys', 'Client journeys', 'Seven lifecycle journeys for people who are already TenTrade clients, and three follow-up journeys for the webinar programmes. Pick one on the left to see its map; click any step to open its setup on the right.') +
       '<div class="prose" id="pv">' + D.overviewHtml + '</div>';
     tagProse($('#pv'), 'ov'); refreshReview();
   }
@@ -131,8 +162,8 @@
   function renderSets() {
     var h = header('Reference', 'Email sets', 'Every drafted email, grouped by set. Click an email to preview it on the right. The journeys use these emails by ID.');
     D.sets.forEach(function (st) {
-      h += '<div class="setcard" data-comment-id="set-' + esc(st.id) + '"><h3>' + esc(st.id) + ' — ' + esc(st.title) + '</h3><div class="meta">Used in journey ' +
-        (st.journey ? '<a href="#j/' + st.journey + '">' + esc(st.journey) + ' — ' + esc((byId[st.journey] || {}).name) + '</a>' : '—') + '</div><div class="elist">';
+      h += '<div class="setcard" data-comment-id="set-' + esc(st.id) + '"><h3>' + esc(st.id) + ' — ' + esc(st.title) + '</h3><div class="meta">Used in ' +
+        (st.journey ? 'journey <a href="#j/' + st.journey + '">' + esc(st.journey) + ' — ' + esc((byId[st.journey] || {}).name) + '</a>' + (st.journey >= 'H' ? ' and the webinar blasts' : '') : 'the daily birthday blasts') + '</div><div class="elist">';
       st.emails.forEach(function (id) {
         var e = D.emails[id];
         h += '<div class="row' + (state.email === id ? ' sel' : '') + '" data-email="' + esc(id) + '"><span class="eid">' + esc(id) + '</span><span class="stp"></span><span><span class="s">' + esc(e.subject) + '</span><br><span class="l">' + esc(e.label) + '</span></span></div>';
@@ -156,7 +187,7 @@
     var sends = j.steps.filter(function (s) { return s.type === 'Send'; });
     var calls = j.steps.filter(function (s) { return s.type === 'Call task'; }).length;
     var h = '<div data-comment-id="j-' + j.id + '-head">' + header('Journey ' + j.id, j.fullTitle, '') + '</div>';
-    h += '<div class="chips" data-comment-id="j-' + j.id + '-summary"><span class="chip goal">Goal: ' + esc(j.goal) + '</span><span class="chip k">' + j.steps.length + ' steps</span><span class="chip k">' + sends.length + ' emails</span><span class="chip k">' + calls + ' call tasks</span><span class="chip k">Replaces ' + esc(j.replaces) + '</span></div>';
+    h += '<div class="chips" data-comment-id="j-' + j.id + '-summary"><span class="chip goal">Goal: ' + esc(j.goal) + '</span><span class="chip k">' + j.steps.length + ' steps</span><span class="chip k">' + sends.length + ' emails</span><span class="chip k">' + calls + (calls === 1 ? ' call task' : ' call tasks') + '</span><span class="chip k">Replaces ' + esc(j.replaces) + '</span></div>';
     h += '<div class="chips" data-comment-id="j-' + j.id + '-segment">' + j.segment.map(function (s) { return '<span class="chip seg"><b>' + esc(s.field) + ':</b> ' + esc(s.value) + '</span>'; }).join('') + '</div>';
     h += '<div class="chips" data-comment-id="j-' + j.id + '-settings">' + j.settings.map(function (s) { return '<span class="chip"><b>' + esc(s.setting) + ':</b> ' + esc(s.value.replace(/\*\*/g, '')) + '</span>'; }).join('') + '</div>';
     h += '<div class="tabs"><button data-tab="flow"' + (state.tab === 'flow' ? ' class="on"' : '') + '>Flow</button><button data-tab="emails"' + (state.tab === 'emails' ? ' class="on"' : '') + '>Emails (' + sends.length + ')</button><button data-tab="about"' + (state.tab === 'about' ? ' class="on"' : '') + '>About this journey</button></div>';
@@ -421,6 +452,130 @@
     return h + '</div>';
   }
 
+  /* ---------------------------------------------------------------- pages */
+  function renderPage() {
+    var P = PAGES[state.page], pg = P.page, sec = P.sec;
+    var eyebrow = pg.part ? sec.title + ' · ' + pg.docTitle : sec.title;
+    var h = header(eyebrow, pg.title, pg.lede || '');
+    if (pg.kind === 'embed') {
+      h += '<p class="hint">An example page, shown as it would appear to a client. <a href="' + esc(pg.src) + '" target="_blank" rel="noopener">Open it in a new tab ↗</a></p>' +
+        '<div class="embed"><iframe src="' + esc(pg.src) + '" title="' + esc(pg.title) + '" loading="lazy"></iframe></div>';
+    } else if (pg.kind === 'backlog') {
+      h += '<div class="prose" id="pv">' + pg.html + '</div>' + backlogHtml(pg);
+    } else if (pg.kind === 'birthday') {
+      h += birthdayHtml(pg) + '<div class="prose" id="pv">' + pg.html + '</div>';
+    } else {
+      h += '<div class="prose" id="pv">' + pg.html + '</div>';
+    }
+    // previous / next within the section
+    var i = sec.pages.indexOf(pg);
+    if (sec.pages.length > 1) {
+      h += '<div class="pager">' + (i > 0 ? '<a href="#p/' + sec.pages[i - 1].id + '">← ' + esc(sec.pages[i - 1].title) + '</a>' : '<span></span>') +
+        (i < sec.pages.length - 1 ? '<a href="#p/' + sec.pages[i + 1].id + '">' + esc(sec.pages[i + 1].title) + ' →</a>' : '<span></span>') + '</div>';
+    }
+    $('#main').innerHTML = h;
+    $('#main').classList.toggle('wide', pg.kind === 'backlog' || pg.kind === 'embed');
+    if ($('#pv')) { tagProse($('#pv'), 'pg-' + pg.id); }
+    refreshReview();
+  }
+
+  /* ---- backlog board: the Credo staging-plan board (PBI rows, tasks across
+   * To do / Doing / Done, a review column, WIP limit of one row). */
+  var WHO = { 'PanUI team': 'by-panui', 'Us': 'by-us', 'Both': 'by-both', 'Needs decision': 'by-decision' };
+  function backlogHtml(pg) {
+    var all = [];
+    pg.groups.forEach(function (g) { all = all.concat(g.pbis); });
+    var st = function (p, k) { return p.tasks.filter(function (t) { return t.status === k; }).length; };
+    var active = all.filter(function (p) { return st(p, 'doing'); });
+    var done = all.filter(function (p) { return p.tasks.length && st(p, 'done') === p.tasks.length; });
+    var blocked = all.filter(function (p) { return p.blocked; });
+    var h = '<div class="bl-status">' +
+      '<div class="card state"><small>Status</small><b>Proposed to TenTrade’s platform team. Nothing started.</b></div>' +
+      '<div class="card"><small>In progress (WIP 1)</small><b>' + (active.length ? esc(active.map(function (p) { return p.id; }).join(', ')) : 'none') + '</b></div>' +
+      '<div class="card"><small>PBIs done</small><b>' + done.length + ' / ' + all.length + '</b></div>' +
+      '<div class="card"><small>Waiting on a decision</small><b>' + blocked.length + '</b></div></div>';
+    if (active.length > 1) { h += '<div class="bl-warn">WIP limit broken: ' + active.length + ' rows have tasks in Doing.</div>'; }
+    h += '<div class="bl-legend">' + Object.keys(WHO).map(function (k) { return '<span><i class="pill ' + WHO[k] + '">' + esc(k) + '</i></span>'; }).join('') + '<span>Rows in priority order; only one row in Doing at a time.</span></div>';
+    h += '<div class="board"><div class="hd">Backlog item (PBI)</div><div class="hd">To do</div><div class="hd doing">Doing <em>· WIP limit: 1 row</em></div><div class="hd">Done</div><div class="hd">Review</div>';
+    pg.groups.forEach(function (g) {
+      h += '<div class="grp-row" data-comment-id="bl-grp-' + esc(slugify(g.title)) + '"><b>' + (g.feature ? 'Feature: ' : '') + esc(g.title) + '</b>' + (g.html ? '<div class="gdesc">' + g.html + '</div>' : '') + '</div>';
+      g.pbis.forEach(function (p) {
+        var isActive = st(p, 'doing') > 0, isDone = p.tasks.length && st(p, 'done') === p.tasks.length;
+        var cls = isActive ? 'row-active' : isDone ? 'row-done' : p.blocked ? 'row-blocked' : '';
+        var col = function (k, name) {
+          var ts = p.tasks.filter(function (t) { return t.status === k; });
+          return '<div class="cell col col-' + k + ' ' + cls + (ts.length ? '' : ' empty') + '"><span class="lbl">' + name + '</span>' +
+            ts.map(function (t) { return '<div class="task">' + esc(t.text) + '</div>'; }).join('') + '</div>';
+        };
+        h += '<div class="cell pbi ' + cls + '" id="pbi-' + esc(p.id) + '" data-comment-id="bl-' + esc(p.id) + '">' +
+          '<div class="top"><span class="id">' + esc(p.id) + '</span><i class="pill ' + (WHO[p.who] || 'by-both') + '">' + esc(p.who) + '</i>' +
+          (p.blocked ? '<i class="pill blk">Blocked · ' + esc(p.blocked) + '</i>' : '') +
+          (p.refs ? p.refs.split(/,\s*/).map(function (r) { return '<span class="ref">' + esc(r) + '</span>'; }).join('') : '') + '</div>' +
+          '<div class="ttl">' + esc(p.title) + '</div><p class="pwhy">' + esc(p.why) + '</p>' +
+          '<details><summary>Done when</summary><div class="dod">' + esc(p.done) + '</div></details></div>' +
+          col('todo', 'To do') + col('doing', 'Doing') + col('done', 'Done') +
+          '<div class="cell col col-review ' + cls + '"><span class="lbl">Review</span><div class="rv"><div class="s">' + esc(p.review || 'Planned') + '</div></div></div>';
+      });
+    });
+    return h + '</div>';
+  }
+  function slugify(t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+  /* ---- birthday calendar: one blast per day of the year, coloured by star
+   * sign; the twelve sample days open their email, any other day opens its
+   * sign's email with that day's date. */
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var ELEMENT = { Aries: 'fire', Leo: 'fire', Sagittarius: 'fire', Taurus: 'earth', Virgo: 'earth', Capricorn: 'earth', Gemini: 'air', Libra: 'air', Aquarius: 'air', Cancer: 'water', Scorpio: 'water', Pisces: 'water' };
+  var GLYPH = { Aries: '♈', Taurus: '♉', Gemini: '♊', Cancer: '♋', Leo: '♌', Virgo: '♍', Libra: '♎', Scorpio: '♏', Sagittarius: '♐', Capricorn: '♑', Aquarius: '♒', Pisces: '♓' };
+  function monthIdx(name) { var k = name.slice(0, 3).toLowerCase(); for (var i = 0; i < 12; i++) { if (MONTHS[i].slice(0, 3).toLowerCase() === k) { return i; } } return -1; }
+  function md(m, d) { return (m + 1) * 100 + d; }
+  function signOf(pg, m, d) {
+    var key = md(m, d);
+    for (var i = 0; i < pg.signs.length; i++) {
+      var r = pg.signs[i].dates.split(/\s*[–-]\s*/), a = r[0].split(' '), b = r[1].split(' ');
+      var from = md(monthIdx(a[1]), +a[0]), to = md(monthIdx(b[1]), +b[0]);
+      if (from <= to ? key >= from && key <= to : key >= from || key <= to) { return pg.signs[i]; }
+    }
+    return null;
+  }
+  function sampleOf(pg, m, d) {
+    for (var i = 0; i < pg.samples.length; i++) { var p = pg.samples[i].date.split(' '); if (+p[0] === d && monthIdx(p[1]) === m) { return pg.samples[i]; } }
+    return null;
+  }
+  function sampleForSign(pg, sign) { return pg.samples.filter(function (x) { return x.sign === sign; })[0]; }
+  var DAYS_IN = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  function birthdayHtml(pg) {
+    var h = '<div class="bd-legend">' + pg.signs.map(function (sg) { return '<span class="el-' + ELEMENT[sg.sign] + '"><i>' + GLYPH[sg.sign] + '</i>' + esc(sg.sign) + ' <small>' + esc(sg.dates) + '</small></span>'; }).join('') +
+      '</div><p class="hint">366 daily blasts. <b>★</b> marks the twelve sample days written in full. Click any day to see the email that goes out.</p><div class="bd-cal">';
+    MONTHS.forEach(function (mn, m) {
+      h += '<div class="bd-month"><h4>' + mn + '</h4><div class="bd-days">';
+      for (var d = 1; d <= DAYS_IN[m]; d++) {
+        var sg = signOf(pg, m, d), smp = sampleOf(pg, m, d), key = String(m + 1).padStart(2, '0') + String(d).padStart(2, '0');
+        var dd = String(d).padStart(2, '0') + String(m + 1).padStart(2, '0');
+        h += '<button class="bd-day el-' + (sg ? ELEMENT[sg.sign] : 'x') + (smp ? ' smp' : '') + (state.sub === dd ? ' sel' : '') + '" data-bday="' + dd + '" title="' + d + ' ' + mn + ' · ' + (sg ? esc(sg.sign) : '') + (smp ? ' · sample ' + esc(smp.email) : '') + '" data-k="' + key + '">' + d + (smp ? '<i>★</i>' : '') + '</button>';
+      }
+      h += '</div></div>';
+    });
+    return h + '</div>';
+  }
+  function openBirthday(dd) {
+    var pg = PAGES.birthday && PAGES.birthday.page; if (!pg) { return; }
+    var d = +dd.slice(0, 2), m = +dd.slice(2, 4) - 1;
+    var sg = signOf(pg, m, d), smp = sampleOf(pg, m, d), base = sg && sampleForSign(pg, sg.sign);
+    var e = D.emails[(smp || base || {}).email];
+    $('#dh').innerHTML = '<div class="ic" style="background:var(--send)">' + (sg ? GLYPH[sg.sign] : '✉') + '</div><div><div class="tt">Birthday blast · ' + d + ' ' + MONTHS[m] + '</div><div class="st">' + (sg ? esc(sg.sign) + ' · ' + esc(sg.nick) : '') + '</div></div><button class="x" data-close title="Close (Esc)">✕</button>';
+    var info = '<div class="cfg" data-comment-id="bd-' + dd + '"><h4>Blast set-up</h4><dl class="kv">' +
+      '<dt>Name</dt><dd>birthday-' + dd + ' · SEG-16</dd><dt>Audience</dt><dd>Birth date: Anniversary in 0 days · Last login: Last 365 days</dd>' +
+      '<dt>Send</dt><dd>' + d + ' ' + MONTHS[m] + ', 07:00 UTC</dd><dt>Template</dt><dd>' + (sg ? esc(sg.sign) : '') + ' birthday email' + (e ? ' (' + esc(e.id) + ')' : '') + '</dd>' +
+      '<dt>Coupon</dt><dd>20% off one funded-account challenge, valid 7 days</dd></dl>' +
+      (smp ? '<div class="why">Sample day: this email is written in full in set S24.</div>' : base ? '<div class="why">Uses the ' + esc(sg.sign) + ' email written for ' + esc(base.date) + '; on this day it goes out unchanged, dated ' + d + ' ' + MONTHS[m] + '.</div>' : '') +
+      (m === 1 && d === 29 ? '<div class="why">Leap years only. In other years these clients join the 28 February blast.</div>' : '') + '</div>';
+    $('#db').innerHTML = info + emailPreview(e);
+    document.body.classList.add('drawer-open');
+    Array.prototype.forEach.call(document.querySelectorAll('.bd-day'), function (b) { b.classList.toggle('sel', b.dataset.bday === dd); });
+    refreshReview();
+  }
+
   /* --------------------------------------------------------------- drawer */
   function ctl(label, value, isSelect) {
     return '<label class="f"><span>' + esc(label) + '</span><div class="ctl' + (isSelect ? ' sel' : '') + '">' + value + '</div></label>';
@@ -523,6 +678,7 @@
     document.body.classList.remove('drawer-open');
     if (state.view === 'journey' && state.step) { nav('#j/' + state.j); }
     else if (state.view === 'sets' && state.email) { nav('#sets'); }
+    else if (state.view === 'page' && state.sub) { nav('#p/' + state.page); }
   }
 
   /* --------------------------------------------------------------- router */
@@ -534,19 +690,28 @@
     try { location.hash = h; } catch (err) { /* ignore */ }
     if (location.hash !== h) { fallbackHash = h; route(); }
   }
-  function currentHash() { return location.hash || fallbackHash || '#overview'; }
+  function currentHash() { return location.hash || fallbackHash || LANDING; }
   function route() {
     var hsh = currentHash().slice(1).split('/');
     var prevView = state.view, prevJ = state.j;
-    state.step = null; state.email = null;
-    if (hsh[0] === 'j' && byId[hsh[1]]) {
+    var prevPage = state.page;
+    state.step = null; state.email = null; state.sub = null;
+    if (hsh[0] === '' || (hsh[0] === 'p' && !PAGES[hsh[1]])) { nav(LANDING); return; }
+    if (hsh[0] === 'p') {
+      state.view = 'page'; state.page = hsh[1]; state.sub = hsh[2] || null;
+    } else if (hsh[0] === 'j' && byId[hsh[1]]) {
       state.view = 'journey'; state.j = hsh[1]; state.step = hsh[2] || null;
       if (prevJ !== state.j) { state.tab = 'flow'; }
     } else if (hsh[0] === 'sets') { state.view = 'sets'; state.email = hsh[1] || null; }
     else if (hsh[0] === 'builder') { state.view = 'builder'; }
     else { state.view = 'overview'; }
-    markNav();
-    var sameScreen = prevView === state.view && prevJ === state.j && document.getElementById('main').children.length;
+    renderNav();
+    var sameScreen = prevView === state.view && prevJ === state.j && (state.view !== 'page' || prevPage === state.page) && document.getElementById('main').children.length;
+    if (state.view === 'page') {
+      if (!sameScreen) { renderPage(); window.scrollTo(0, 0); }
+      if (state.page === 'birthday' && state.sub) { openBirthday(state.sub); } else { document.body.classList.remove('drawer-open'); }
+      return;
+    }
     if (state.view === 'journey') {
       if (!sameScreen) { renderJourney(); window.scrollTo(0, 0); } else { markSelection(); }
       var j = byId[state.j];
@@ -603,7 +768,15 @@
   document.addEventListener('click', function (e) {
     var t = e.target;
     var a = t.closest('a[href^="#"]');
-    if (a) { e.preventDefault(); nav(a.getAttribute('href')); return; }
+    if (a) {
+      e.preventDefault();
+      var href = a.getAttribute('href'), em = /^#sets\/(S\d\d-E\w+)$/.exec(href);
+      // Email links inside a page or a journey's notes open the preview in place.
+      if (em && D.emails[em[1]] && state.view !== 'sets') { openEmail(em[1]); return; }
+      nav(href); return;
+    }
+    var bd = t.closest('[data-bday]');
+    if (bd) { nav('#p/birthday/' + bd.dataset.bday); return; }
     var goEl = t.closest('[data-go]');
     if (goEl) { e.stopPropagation(); go(goEl.getAttribute('data-go')); return; }
     if (t.closest('[data-close]')) { closeDrawer(); return; }
@@ -641,9 +814,12 @@
   // that holds the commented element, then hand the element back.
   function hashForAnchor(a) {
     var m;
-    if ((m = /^(?:j|d|p)-([A-G])-([A-G]\d+\w*)$/.exec(a))) { return '#j/' + m[1] + '/' + m[2]; }
-    if ((m = /^j-([A-G])-(?:head|summary|segment|settings)$/.exec(a))) { return '#j/' + m[1]; }
-    if ((m = /^j-([A-G])-about-/.exec(a))) { state.tab = 'about'; return '#j/' + m[1]; }
+    if ((m = /^(?:j|d|p)-([A-Z])-([A-Z]\d+\w*)$/.exec(a))) { return '#j/' + m[1] + '/' + m[2]; }
+    if ((m = /^j-([A-Z])-(?:head|summary|segment|settings)$/.exec(a))) { return '#j/' + m[1]; }
+    if ((m = /^j-([A-Z])-about-/.exec(a))) { state.tab = 'about'; return '#j/' + m[1]; }
+    if ((m = /^pg-(.+)-(?:h3|h4|p|li|tr)\d+$/.exec(a)) && PAGES[m[1]]) { return '#p/' + m[1]; }
+    if (/^bl-/.test(a)) { return '#p/backlog'; }
+    if ((m = /^bd-(\d{4})$/.exec(a))) { return '#p/birthday/' + m[1]; }
     if ((m = /^em-(S\d\d-E\w+)$/.exec(a))) {
       if (document.querySelector('[data-comment-id="' + a + '"]')) { return null; }
       return '#sets/' + m[1];
@@ -661,7 +837,7 @@
       try { history.replaceState(null, '', target); } catch (e) { /* sandboxed */ }
       route();
       if (wantAbout && state.view === 'journey' && state.tab !== 'about') { state.tab = 'about'; renderJourney(); }
-    } else if (/^j-([A-G])-about-/.test(anchor) && state.tab !== 'about') { state.tab = 'about'; renderJourney(); }
+    } else if (/^j-([A-Z])-about-/.test(anchor) && state.tab !== 'about') { state.tab = 'about'; renderJourney(); }
     return document.querySelector('[data-comment-id="' + anchor + '"]');
   };
 
