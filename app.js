@@ -156,8 +156,16 @@
   }
 
   /* ---------------------------------------------------------------- views */
-  function header(eyebrow, title, lede) {
-    return '<div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(title) + '</h1>' + (lede ? '<p class="lede">' + lede + '</p>' : '');
+  // Notice on every page: the content is speculative and for demonstration.
+  // Texts live in hub-pages.json ("notice"), with per-section wording.
+  function noticeHtml() {
+    var N = D.notice || {}, sec = activeSection();
+    var text = (N.sections && N.sections[sec]) || N['default'];
+    if (!text) { return ''; }
+    return '<div class="notice" role="note" data-comment-id="notice-' + esc(sec) + '"><b>' + esc(N.label || 'Notice') + '</b><span>' + esc(text) + '</span></div>';
+  }
+  function header(eyebrow, title, lede, bare) {
+    return (bare ? '' : noticeHtml()) + '<div class="eyebrow">' + esc(eyebrow) + '</div><h1>' + esc(title) + '</h1>' + (lede ? '<p class="lede">' + lede + '</p>' : '');
   }
 
   function renderOverview() {
@@ -197,7 +205,7 @@
     if (!j) { nav('#overview'); return; }
     var sends = j.steps.filter(function (s) { return s.type === 'Send'; });
     var calls = j.steps.filter(function (s) { return s.type === 'Call task'; }).length;
-    var h = '<div data-comment-id="j-' + j.id + '-head">' + header('Journey ' + j.id, j.fullTitle, '') + '</div>';
+    var h = noticeHtml() + '<div data-comment-id="j-' + j.id + '-head">' + header('Journey ' + j.id, j.fullTitle, '', true) + '</div>';
     h += '<div class="chips" data-comment-id="j-' + j.id + '-summary"><span class="chip goal">Goal: ' + esc(j.goal) + '</span><span class="chip k">' + j.steps.length + ' steps</span><span class="chip k">' + sends.length + ' emails</span><span class="chip k">' + calls + (calls === 1 ? ' call task' : ' call tasks') + '</span><span class="chip k">Replaces ' + esc(j.replaces) + '</span></div>';
     h += '<div class="chips" data-comment-id="j-' + j.id + '-segment">' + j.segment.map(function (s) { return '<span class="chip seg"><b>' + esc(s.field) + ':</b> ' + esc(s.value) + '</span>'; }).join('') + '</div>';
     h += '<div class="chips" data-comment-id="j-' + j.id + '-settings">' + j.settings.map(function (s) { return '<span class="chip"><b>' + esc(s.setting) + ':</b> ' + esc(s.value.replace(/\*\*/g, '')) + '</span>'; }).join('') + '</div>';

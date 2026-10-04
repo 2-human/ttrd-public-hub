@@ -9855,5 +9855,12 @@ window.JOURNEY_DATA = {
     }
    ]
   }
- ]
+ ],
+ "notice": {
+  "label": "Speculative · for demonstration",
+  "default": "The information and recommendations in this hub are speculative, based on what we know so far, and are shown for demonstration purposes. The final review hub will be ready once all stakeholders have provided their input and reviewed the information.",
+  "sections": {
+   "planning": "This strategy and plan are speculative, based on what we know so far, and will be adjusted as we take in more information during onboarding. The final review hub will be ready once all stakeholders have provided their input and reviewed the information."
+  }
+ }
 };
