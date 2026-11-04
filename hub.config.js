@@ -23,7 +23,7 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=6c77212e35', 'data/core.js?v=436a035990', 'data/journeys.js?v=5d5e175bd4', 'data/people.js?v=4cacf3c15e', 'data/calendar.js?v=a935657b32', 'data/comms.js?v=e13c141679', 'data/comms-text.js?v=48c65d0c9b', 'data/questions.js?v=613341aa74', 'data/qa-fields.js?v=f2528a85d9'],
+  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=6c77212e35', 'data/core.js?v=a82b1e4f42', 'data/journeys.js?v=5d5e175bd4', 'data/people.js?v=bc3a82f2a6', 'data/calendar.js?v=b5fb2666c7', 'data/comms.js?v=cea65afdcc', 'data/comms-text.js?v=cfd0598d89', 'data/questions.js?v=613341aa74', 'data/qa-fields.js?v=f2528a85d9'],
   views: ['views.js?v=dafd7bebf7', 'feedback.js?v=0e0c663a1a'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
