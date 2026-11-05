@@ -23,7 +23,7 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=aa7b0c697b', 'data/ui-platforms.js?v=b8a034ef06', 'data/core.js?v=b3a50e778a', 'data/journeys.js?v=996b4bb041', 'data/people.js?v=f260392c9d', 'data/calendar.js?v=bf3ef404a7', 'data/comms.js?v=245e1184ee', 'data/comms-text.js?v=37648d3a5a', 'data/questions.js?v=964b2e939a', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=446eed13ca', 'data/panui-css.js?v=26d28c122a'],
+  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=aa7b0c697b', 'data/ui-platforms.js?v=b8a034ef06', 'data/core.js?v=ed4eeff017', 'data/journeys.js?v=996b4bb041', 'data/people.js?v=f260392c9d', 'data/calendar.js?v=6badd88911', 'data/comms.js?v=245e1184ee', 'data/comms-text.js?v=37648d3a5a', 'data/questions.js?v=964b2e939a', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=446eed13ca', 'data/panui-css.js?v=26d28c122a'],
   views: ['panui-journey.js?v=afae622e1d', 'platforms.js?v=55cd5be023', 'views.js?v=3201198e85', 'feedback.js?v=0e0c663a1a'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
