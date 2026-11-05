@@ -404,3 +404,37 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
   .app-nav{padding:10px 12px}
   .app-body .tree .row a::after{display:none}
 }
+
+/* ---- Platforms (platforms.js): Stripo's areas, folder tree, preview cards ---- */
+.app-body .pf-cnt{display:inline-block;margin-left:6px;padding:0 7px;border-radius:9px;background:var(--line);color:var(--sec);font:600 11px/1.6 var(--body);vertical-align:2px}
+.app-body .pf-big{font:700 22px/1.2 var(--body);color:var(--ink);margin:2px 0 4px}
+.app-body .pf-big small{font-size:12px;font-weight:600;color:var(--sec)}
+.app-body .tile.static:hover{border-color:var(--line);box-shadow:none}
+.app-body .pf-team{display:flex;gap:6px;flex-wrap:wrap}
+.app-body .pf-av{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#ebe8f2;color:#5e5b6a;font:700 11px/1 var(--body);vertical-align:middle}
+.app-body .pf-bar{margin:8px 0 12px}
+.app-body .pf-find{width:100%;max-width:460px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff}
+.app-body .pf-crumbs{font-size:14px;margin:6px 0 4px}
+.app-body .pf-crumbs a{color:var(--brand);text-decoration:none}
+.app-body .pf-sep{margin:0 7px;color:#b6b2c2}
+.app-body .pf-fold{color:#8f8b9e}
+.app-body .pf-tbl td{vertical-align:middle}
+.app-body .pf-tbl tr.pick{cursor:pointer}
+.app-body .pf-tbl tr.pick:hover td{background:var(--soft)}
+.app-body .pf-mini{width:34px;padding-right:0}
+.app-body .pf-mini-img{display:block;width:30px;height:40px;object-fit:cover;object-position:top;border:1px solid var(--line);border-radius:4px;background:#f3f2f6}
+.app-body .pf-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:10px 0 18px}
+.app-body .pf-card{display:flex;flex-direction:column;gap:4px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;font:inherit;color:var(--ink)}
+.app-body .pf-card:hover{border-color:var(--brand)}
+.app-body .pf-card-img{width:100%;height:170px;object-fit:cover;object-position:top;border-radius:6px;background:#f3f2f6}
+.app-body .pf-card b{font-size:13px}
+.app-body .pf-seg{display:inline-flex;gap:2px;background:#ebe8f2;border-radius:9px;padding:3px;margin:4px 0 6px}
+.app-body .pf-seg span{padding:3px 10px;border-radius:7px;font-size:12px;color:var(--sec)}
+.app-body .pf-seg span.on{background:#fff;color:var(--ink);font-weight:600}
+.app-body .pf-kv{margin:4px 0 12px;grid-template-columns:minmax(150px,36%) minmax(0,1fr);background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;gap:7px 14px}
+.app-body .pf-kv dd{font-weight:500}
+.app-body .pf-kv dd .hint{margin:2px 0 0;font-weight:400}
+.app-body .pf-sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:4px;border:1px solid var(--line)}
+#app-drawer .pf-preview{text-align:center;background:#f3f2f6;border-radius:8px;padding:10px}
+#app-drawer .pf-full{display:block;margin:0 auto;width:100%;max-width:420px;height:auto;border-radius:4px;background:#fff}
+#app-drawer .pf-full.none{height:200px}

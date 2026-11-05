@@ -23,8 +23,8 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=aa7b0c697b', 'data/core.js?v=81b62fdef8', 'data/journeys.js?v=7cdd0c1536', 'data/people.js?v=647aa08e84', 'data/calendar.js?v=a110555708', 'data/comms.js?v=882ac3f832', 'data/comms-text.js?v=61fc4c0ccc', 'data/questions.js?v=613341aa74', 'data/qa-fields.js?v=f2528a85d9'],
-  views: ['views.js?v=9726fb6d04', 'feedback.js?v=0e0c663a1a'],
+  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=aa7b0c697b', 'data/ui-platforms.js?v=155e722f8b', 'data/core.js?v=cfd14c8dd2', 'data/journeys.js?v=996b4bb041', 'data/people.js?v=5f3f5bbe9f', 'data/calendar.js?v=3fe2500a54', 'data/comms.js?v=c25e50ef28', 'data/comms-text.js?v=09d5fa5f64', 'data/questions.js?v=613341aa74', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=950bf789fe'],
+  views: ['platforms.js?v=f090d9759a', 'views.js?v=4e5c3d00e8', 'feedback.js?v=0e0c663a1a'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
@@ -41,6 +41,8 @@ window.HUB_CONFIG = {
     /* the notice at the top of every page; a section can have its own text (notice:<section id>) */
     noticeLabel: 'Speculative · for demonstration',
     notice: 'The information and recommendations in this hub are speculative, based on what we know so far, and are shown for demonstration purposes. The final review hub will be ready once all stakeholders have provided their input and reviewed the information.',
+    'noticeLabel:platforms': 'Snapshot · read-only',
+    'notice:platforms': 'Each platform as it was on the day it was read, shown on its pages. Nothing in the hub changes a platform; the snapshot is refreshed by reading the platform again.',
     'notice:timeline': 'This strategy and plan are speculative, based on what we know so far, and will be adjusted as we take in more information during onboarding. The final review hub will be ready once all stakeholders have provided their input and reviewed the information.'
   }
 };
