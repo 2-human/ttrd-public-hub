@@ -89,7 +89,7 @@
   }
 
   /* the mode flag (gate-mode.js), the public web config, the store (sign-in, keys, answers, comments, approvals), the chassis */
-  ['gate-mode.js?v=9205d301a6', 'firebase-config.js?v=cc61c74294', 'answers.js?v=d3930e3595', 'chassis/hub-core.js?v=679b0255c7'].reduce(function (p, f) { return p.then(function () { return load(f); }); }, Promise.resolve())
+  ['gate-mode.js?v=9205d301a6', 'firebase-config.js?v=cc61c74294', 'answers.js?v=b7bbc08136', 'chassis/hub-core.js?v=679b0255c7'].reduce(function (p, f) { return p.then(function () { return load(f); }); }, Promise.resolve())
     .then(function () { return window.HUB_GATED ? gate() : Hub.boot(); })
     .catch(function (e) { console.error('[gate]', e); });
 })();

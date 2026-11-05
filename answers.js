@@ -4,7 +4,7 @@
  * Shared backend: Firestore + Storage of the project in window.FIREBASE_CONFIG (firebase-config.js), under hubs/ttrd.
  * People sign in with their own account by email link (features/auth-gate/email-link-sign-in.md); sign-up is closed.
  * The account's `role` claim decides what it reaches, and firebase/firestore.rules enforce the same:
- *   admin, team  answers, QA comments, approvals
+ *   admin, team  answers, QA comments, approvals, PanUI journey drafts
  *   client       answers only
  * Without a backend config the answers stay in this browser (localStorage + IndexedDB). A shared backend that fails is
  * never replaced by the browser one: `error` is set and saving stops.
@@ -163,6 +163,17 @@
           return F.Fs.setDoc(F.doc('approvals', ref), full).then(function () { return full; }, function (e) { if (old) apprCache[ref] = old; else delete apprCache[ref]; fail(e); return old || null; });
         },
         onChange: function (fn) { apprListeners.push(fn); }
+      };
+    },
+    /* PanUI journey drafts (panui-journey.js): team and admin accounts only. Built in the hub's simulator or by Claude
+     * (tools/hub-firebase/journey-drafts.mjs); nothing here reaches PanUI. */
+    journeyDrafts: function () {
+      if (!F || !api.canQA()) return null;
+      return {
+        subscribe: function (fn) { return F.Fs.onSnapshot(F.col('journeyDrafts'), function (snap) { var o = {}; snap.forEach(function (d) { o[d.id] = d.data(); }); fn(o); }, fail); },
+        save: function (id, rec) { rec = clean(rec); rec.uid = api.user.uid; return F.Fs.setDoc(F.doc('journeyDrafts', id), rec).then(function () { return rec; }); },
+        remove: function (id) { return F.Fs.deleteDoc(F.doc('journeyDrafts', id)); },
+        who: function () { return api.user ? api.user.name : ''; }
       };
     }
   };
