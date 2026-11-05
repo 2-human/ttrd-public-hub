@@ -23,8 +23,8 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=8dbc96ab0c', 'data/core.js?v=e6592f3acc', 'data/journeys.js?v=5d5e175bd4', 'data/people.js?v=c841b412a4', 'data/calendar.js?v=2a8e2aa336', 'data/comms.js?v=f1493ef7b1', 'data/comms-text.js?v=6e89fb2d7d', 'data/questions.js?v=613341aa74', 'data/qa-fields.js?v=f2528a85d9'],
-  views: ['views.js?v=cda3670793', 'feedback.js?v=0e0c663a1a'],
+  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=aa7b0c697b', 'data/core.js?v=64b13077e8', 'data/journeys.js?v=7cdd0c1536', 'data/people.js?v=c841b412a4', 'data/calendar.js?v=da5ad71b4e', 'data/comms.js?v=f1493ef7b1', 'data/comms-text.js?v=6e89fb2d7d', 'data/questions.js?v=613341aa74', 'data/qa-fields.js?v=f2528a85d9'],
+  views: ['views.js?v=9726fb6d04', 'feedback.js?v=0e0c663a1a'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
