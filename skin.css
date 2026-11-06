@@ -485,3 +485,14 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .pg-arrows{display:inline-flex;gap:4px;margin-right:10px}
 .app-body .pg-arrows .drawer-arrow{width:26px;height:26px;font-size:14px}
 .app-main>.crumbs.pg-only{max-width:1060px;margin-left:auto;margin-right:auto}
+.app-body .pg-print{margin-left:auto;font:inherit;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);cursor:pointer}
+.app-body .pg-print:hover{border-color:var(--brand);color:var(--brand)}
+.app-body .crumbs.pg-only{display:flex}
+@media print{
+  .pg-arrows,.pg-print,.crumbs.pg-only,.hs-bar,.pf-bar,.app-main input[type=search],[class*="review-"],[id*="feedback"],[class*="feedback"],[class*="rw-"]{display:none!important}
+  .app-body .pg,.app-main>.pg{max-width:none!important}
+  .app-body a{color:inherit}
+  .app-body .tblw{overflow:visible!important}
+  .app-body tr,.app-body .tile,.app-body h2,.app-body h3{break-inside:avoid}
+  .app-body h2,.app-body h3{break-after:avoid}
+}
