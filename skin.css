@@ -480,3 +480,8 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .hs-kind{display:inline-block;margin-left:4px;padding:0 6px;border-radius:8px;background:var(--line);font-size:11px}
 .app-body .hs-snip{margin:3px 0;font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}
 .app-body .hs-res mark{background:#fde3f0;color:inherit;padding:0 1px;border-radius:2px}
+
+/* main-column back and forward (views.js), beside the breadcrumb */
+.app-body .pg-arrows{display:inline-flex;gap:4px;margin-right:10px}
+.app-body .pg-arrows .drawer-arrow{width:26px;height:26px;font-size:14px}
+.app-main>.crumbs.pg-only{max-width:1060px;margin-left:auto;margin-right:auto}
