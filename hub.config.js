@@ -24,7 +24,7 @@ window.HUB_CONFIG = {
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
   data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=aa7b0c697b', 'data/ui-platforms.js?v=65b92d39da', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=0cdc3075e9', 'data/journeys.js?v=996b4bb041', 'data/people.js?v=058dfcf04e', 'data/calendar.js?v=4490b099a3', 'data/comms.js?v=e6ffd058a8', 'data/comms-text.js?v=60b0df45f0', 'data/questions.js?v=1310573e4d', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=55f429cbdf', 'data/panui-css.js?v=26d28c122a'],
-  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=afae622e1d', 'platforms.js?v=808f2e407b', 'views.js?v=07265667a1', 'feedback.js?v=0e0c663a1a'],
+  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=afae622e1d', 'platforms.js?v=808f2e407b', 'views.js?v=7a961725b1', 'feedback.js?v=0e0c663a1a'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
