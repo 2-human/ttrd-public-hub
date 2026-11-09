@@ -496,3 +496,21 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
   .app-body tr,.app-body .tile,.app-body h2,.app-body h3{break-inside:avoid}
   .app-body h2,.app-body h3{break-after:avoid}
 }
+/* home: issue cards */
+.app-body .hm-intro p{margin:4px 0 0;font-size:15px;color:var(--sec);max-width:70ch}
+.app-body .hm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:12px 0 20px}
+.app-body .hm-card{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0}
+.app-body .hm-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:11.5px;color:var(--mute)}
+.app-body .hm-due{font-weight:600}
+.app-body .hm-due.late{color:#b42318}
+.app-body .hm-card h3{margin:10px 0 6px;font-size:16px;line-height:1.3;color:var(--brand2)}
+.app-body .hm-card>p{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--ink)}
+.app-body .hm-card dl{margin:0 0 10px;display:grid;grid-template-columns:max-content 1fr;gap:4px 10px;font-size:13px;line-height:1.5}
+.app-body .hm-card dt{font-weight:700;color:var(--mute);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.app-body .hm-card dd{margin:0;min-width:0}
+.app-body .hm-foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px}
+.app-body .hm-page a{font-weight:600}
+.app-body .hm-refs{display:inline-flex;flex-wrap:wrap;gap:4px}
+@media (max-width:760px){.app-body .hm-grid{grid-template-columns:1fr}}
+/* long unbroken strings (URLs in chat entries) wrap instead of widening the page on phones */
+.app-body .prose p,.app-body .prose li{overflow-wrap:break-word}
