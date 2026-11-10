@@ -514,3 +514,17 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 @media (max-width:760px){.app-body .hm-grid{grid-template-columns:1fr}}
 /* long unbroken strings (URLs in chat entries) wrap instead of widening the page on phones */
 .app-body .prose p,.app-body .prose li{overflow-wrap:break-word}
+/* products and rewards (content/planning/discovery-products.md) */
+.app-body .pr-group{margin:26px 0 10px;font-size:15px}
+.app-body .pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.app-body .pr-card{display:block;background:#fff;border:1px solid var(--line,#e3e1ea);border-radius:12px;padding:14px 16px;color:inherit;text-decoration:none}
+.app-body .pr-card:hover{border-color:var(--accent,#c2187a);box-shadow:0 2px 10px rgba(20,16,40,.06)}
+.app-body .pr-card h3{margin:0 0 6px;font-size:14px}
+.app-body .pr-card p{margin:0;font-size:13px;color:var(--mute,#5e5b6a);overflow-wrap:break-word}
+.pr-body table{font-size:12px}
+.pr-body{overflow-x:auto}
+.pr-lede{font-weight:500}
+.pr-src{overflow-wrap:anywhere;font-size:13px}
+@media (max-width:760px){.app-body .pr-grid{grid-template-columns:1fr}}
+.pr-body td,.pr-body th{word-break:normal;overflow-wrap:normal}
+.pr-body td:first-child,.pr-body th:first-child{white-space:nowrap}
