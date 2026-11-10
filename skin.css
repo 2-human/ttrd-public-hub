@@ -548,3 +548,22 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .gl-rel a:hover{border-color:var(--accent,#c2187a)}
 .gl-rel b{display:block;font-size:13px}
 .gl-rel span{display:block;font-size:12px;color:var(--mute,#5e5b6a)}
+
+/* ---- Vault: built emails drawn inline (views.js vaultHtml; content/email/templates/vault.py) ---- */
+.app-body .vt-bar{position:sticky;top:0;z-index:3;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 0;margin:6px 0 4px;background:var(--paper,#fff);border-bottom:1px solid var(--line)}
+.app-body .vt-tab,.app-body .vt-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:500 13px/1.2 var(--body);color:var(--ink);text-decoration:none;cursor:pointer}
+.app-body .vt-tab.on,.app-body .vt-btn.on{background:var(--brand,#c2187a);border-color:var(--brand,#c2187a);color:#fff}
+.app-body .vt-btn:disabled{opacity:.45;cursor:default}
+.app-body .vt-sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.app-body .vt-note{max-width:760px;margin:10px 0 0}
+.app-body .vt-meta{max-width:760px;margin:12px 0 0;padding:12px 16px;border:1px solid var(--line);border-radius:10px;display:grid;grid-template-columns:110px 1fr;gap:4px 12px;font-size:13px}
+.app-body .vt-meta dt{color:var(--mute,#6b6878)}.app-body .vt-meta dd{margin:0}
+.app-body .vt-stage{padding:18px 0 40px;display:flex;justify-content:center}
+.app-body .vbox{container:vmail / inline-size;width:600px;max-width:100%;background:#202024;border-radius:6px;overflow:hidden;box-shadow:0 2px 14px rgba(20,10,30,.12);transition:width .2s}
+.app-body .vbox-phone{width:375px}
+/* the email keeps its own inline styles; the hub's table and text rules must not reach it */
+.app-body .vmail table{width:auto;font-size:inherit;margin:0}
+.app-body .vmail td,.app-body .vmail th{border:0;padding:0;text-align:inherit;vertical-align:middle;font-size:inherit}
+.app-body .vmail h1,.app-body .vmail h2{margin:0}
+.app-body .vmail img{max-width:100%}
+@media (max-width:640px){.app-body .vt-meta{grid-template-columns:1fr}}
