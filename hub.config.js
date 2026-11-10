@@ -38,11 +38,8 @@ window.HUB_CONFIG = {
     gateSignOut: 'Sign out', signInConfirmEmail: 'Confirm your email address to finish signing in',
     /* chassis module words that differ from its defaults (config labels win over module defaults) */
     apprBy: 'Recorded by', apprNote: 'Note (optional)', apprNew: 'No decision yet', cmCount: 'Comments: {n}',
-    /* the notice at the top of every page; a section can have its own text (notice:<section id>) */
-    noticeLabel: 'Speculative · for demonstration',
-    notice: 'The information and recommendations in this hub are speculative, based on what we know so far, and are shown for demonstration purposes. The final review hub will be ready once all stakeholders have provided their input and reviewed the information.',
+    /* a notice at the top of a section's pages (notice:<section id>, noticeLabel:<section id>); the general speculative notice was removed on 10 Nov (Miloš) */
     'noticeLabel:platforms': 'Snapshot · read-only',
-    'notice:platforms': 'Each platform as it was on the day it was read, shown on its pages. Nothing in the hub changes a platform; the snapshot is refreshed by reading the platform again.',
-    'notice:timeline': 'This strategy and plan are speculative, based on what we know so far, and will be adjusted as we take in more information during onboarding. The final review hub will be ready once all stakeholders have provided their input and reviewed the information.'
+    'notice:platforms': 'Each platform as it was on the day it was read, shown on its pages. Nothing in the hub changes a platform; the snapshot is refreshed by reading the platform again.'
   }
 };
