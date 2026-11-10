@@ -594,3 +594,9 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .vmail h1,.app-body .vmail h2{margin:0}
 .app-body .vmail img{max-width:100%}
 @media (max-width:640px){.app-body .vt-meta{grid-template-columns:1fr}}
+/* Vault: animated and static side by side (stacked when the column is narrow) */
+.app-body .vt-stage{flex-wrap:wrap;gap:24px;align-items:flex-start}
+.app-body .vt-col{display:flex;flex-direction:column;gap:8px;max-width:100%}
+.app-body .vt-colhead{display:flex;gap:10px;align-items:baseline;font-size:14px}
+.app-body .vt-dl{display:flex;gap:6px;flex-wrap:wrap}
+.app-body .vt-built{margin:0 0 12px}
