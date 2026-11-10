@@ -122,7 +122,7 @@
 .app-body .out .p.out{background:#9b97a8}
 .app-body .flowbar .legend i{font-style:normal;font-size:13px}
 .app-body .canvas{position:relative;height:calc(100vh - 120px);min-height:460px;overflow:auto;border:1px solid #e8e8e8;border-radius:12px;
-  background-color:#fafafb;background-image:radial-gradient(#d4d4d4 1px,transparent 1px);background-size:18px 18px;cursor:grab;overscroll-behavior:contain}
+  background-color:#fafafb;background-image:radial-gradient(#d4d4d4 1px,transparent 1px);background-size:18px 18px;cursor:grab;overscroll-behavior-x:contain}
 .app-body .canvas.panning{cursor:grabbing;user-select:none}
 .app-body .canvas.panning .node{pointer-events:none}
 .app-body .sizer{position:relative;margin:0 auto}
