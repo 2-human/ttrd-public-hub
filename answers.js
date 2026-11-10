@@ -4,8 +4,12 @@
  * Shared backend: Firestore + Storage of the project in window.FIREBASE_CONFIG (firebase-config.js), under hubs/ttrd.
  * People sign in with their own account by email link (features/auth-gate/email-link-sign-in.md); sign-up is closed.
  * The account's `role` claim decides what it reaches, and firebase/firestore.rules enforce the same:
- *   admin, team  answers, QA comments, approvals, PanUI journey drafts
+ *   admin, team  answers, QA comments, approvals, PanUI journey drafts; the public-view index (team reads, admin writes)
  *   client       answers only
+ * Public view (public-view.js): a page's rendered copy in Storage at hubs/ttrd/public/<token>.json, which anyone holding
+ * the token can read (view.html); only admin writes or removes one.
+ * window.HUB_PUBLIC_SEED = { answers, approvals } (set only by tools/hub/public-refresh.mjs in its headless browser): the
+ * store serves those records read-only and connects to nothing, so a refreshed copy shows what the hub shows.
  * Without a backend config the answers stay in this browser (localStorage + IndexedDB). A shared backend that fails is
  * never replaced by the browser one: `error` is set and saving stops.
  *
@@ -14,6 +18,7 @@
 (function () {
   var ROOT = 'hubs/ttrd', KEY = 'ttrd_hub_answers', MAILKEY = 'ttrd_signin_email', FILEDB = 'ttrd_hub_files';
   var SDK = 'https://www.gstatic.com/firebasejs/10.12.0/firebase-';
+  var SEED = window.HUB_PUBLIC_SEED || null;
   var cache = null, listeners = [], apprCache = {}, apprListeners = [], DB = null, F = null, AU = null, SDKS = null, settle, INIT = null;
   var words = function (k) { var L = (window.HUB_CONFIG || {}).labels || {}; return L[k] || k; };
   var notify = function () { listeners.forEach(function (f) { try { f(); } catch (e) { console.error('[answers]', e); } }); };
@@ -114,6 +119,7 @@
     ready: new Promise(function (ok) { settle = ok; }),
     start: function () {
       if (api.started) return api.ready; api.started = true;
+      if (SEED) { cache = SEED.answers || {}; apprCache = SEED.approvals || {}; api.shared = true; api.approvalsShared = true; settle(); notify(); return api.ready; }
       (api.backend || (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey) ? connect().catch(function (e) { F = null; cache = null; api.shared = false; api.error = true; console.error('[answers] shared storage unavailable', e); }) : Promise.resolve())
         .then(function () { settle(); notify(); });
       return api.ready;
@@ -153,6 +159,7 @@
     },
     /* email approvals (chassis module approval): team and admin accounts only. A record only records; nothing is sent. */
     approvals: function () {
+      if (SEED) return { get: function (ref) { return apprCache[ref] || null; }, set: function () { return Promise.resolve(null); }, onChange: function () {} };
       if (!F || !api.canQA()) return null;
       return {
         get: function (ref) { return apprCache[ref] || null; },
@@ -163,6 +170,26 @@
           return F.Fs.setDoc(F.doc('approvals', ref), full).then(function () { return full; }, function (e) { if (old) apprCache[ref] = old; else delete apprCache[ref]; fail(e); return old || null; });
         },
         onChange: function (fn) { apprListeners.push(fn); }
+      };
+    },
+    /* Public view (public-view.js): the index of pages shared without sign-in (team and admin read it) and the copies.
+     * put() uploads the copy first and then writes the index, remove() takes the copy down first: the copy is what makes
+     * a page public, so a half-done step never leaves a page public that the index says is off. Admin only (the rules). */
+    publicPages: function () {
+      if (!F || !api.canQA()) return null;
+      var path = function (token) { return ROOT + '/public/' + token + '.json'; };
+      return {
+        admin: api.user.role === 'admin',
+        who: function () { return api.user ? api.user.name : ''; },
+        subscribe: function (fn) { return F.Fs.onSnapshot(F.col('public'), function (snap) { var o = {}; snap.forEach(function (d) { o[d.id] = d.data(); }); fn(o); }, function (e) { console.error('[answers] public index', e); fn(null); }); },
+        put: function (key, rec, json) {
+          return F.St.uploadBytes(F.St.ref(F.files, path(rec.token)), new Blob([json], { type: 'application/json' }), { contentType: 'application/json', cacheControl: 'no-cache' })
+            .then(function () { rec = clean(rec); rec.uid = api.user.uid; return F.Fs.setDoc(F.doc('public', key), rec).then(function () { return rec; }); });
+        },
+        remove: function (key, token) {
+          return F.St.deleteObject(F.St.ref(F.files, path(token))).catch(function (e) { if (!e || e.code !== 'storage/object-not-found') throw e; })
+            .then(function () { return F.Fs.deleteDoc(F.doc('public', key)); });
+        }
       };
     },
     /* PanUI journey drafts (panui-journey.js): team and admin accounts only. Built in the hub's simulator or by Claude

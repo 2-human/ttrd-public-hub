@@ -23,8 +23,8 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=0c5e128713', 'data/ui-platforms.js?v=9cb411e195', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=a027267c18', 'data/journeys.js?v=30f1a79bfd', 'data/people.js?v=48c45a8b6b', 'data/calendar.js?v=a36aed1178', 'data/comms.js?v=9b6971dfbe', 'data/comms-text.js?v=01bc8e815f', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=387d357d3b', 'data/vault-bf26.js?v=a42078424a'],
-  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=808f2e407b', 'views.js?v=1b01c4987c', 'feedback.js?v=0e0c663a1a'],
+  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=2cd70e99b1', 'data/ui-platforms.js?v=9cb411e195', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=dbd9169d59', 'data/journeys.js?v=30f1a79bfd', 'data/people.js?v=48c45a8b6b', 'data/calendar.js?v=a36aed1178', 'data/comms.js?v=9b6971dfbe', 'data/comms-text.js?v=01bc8e815f', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=387d357d3b', 'data/vault-bf26.js?v=a42078424a'],
+  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=808f2e407b', 'views.js?v=0844835ed7', 'feedback.js?v=0e0c663a1a', 'public-view.js?v=ee021eddd6'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
@@ -36,6 +36,10 @@ window.HUB_CONFIG = {
     gateNoAccess: 'Signed in as {email}, but this account has no access to the hub. Sign out and use your work account, or ask Miloš for access.',
     gateOpenFailed: 'The hub could not be opened. Reload the page to try again.', gateUnavailable: 'The hub is not available right now.',
     gateSignOut: 'Sign out', signInConfirmEmail: 'Confirm your email address to finish signing in',
+    /* the public page (view.html, view.js): the only words a visitor without an account sees besides the copy itself */
+    pubLoading: 'Loading…', pubNotShared: 'This page is not shared.', pubNotSharedBody: 'The link may be old, or the page was taken down. Ask the person who sent it for a new one.',
+    pubFailed: 'This page could not be loaded. Reload to try again.', pubPdf: 'Save as PDF', pubClose: 'Close',
+    pubFoot: 'A read-only copy, as of {date}.',
     /* chassis module words that differ from its defaults (config labels win over module defaults) */
     apprBy: 'Recorded by', apprNote: 'Note (optional)', apprNew: 'No decision yet', cmCount: 'Comments: {n}',
     /* a notice at the top of a section's pages (notice:<section id>, noticeLabel:<section id>); the general speculative notice was removed on 10 Nov (Miloš) */
