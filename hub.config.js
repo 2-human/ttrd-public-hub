@@ -23,8 +23,8 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=4ca5dbe899', 'data/ui-platforms.js?v=65b92d39da', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=98ca1ee752', 'data/journeys.js?v=76dfa224ff', 'data/people.js?v=376a947d32', 'data/calendar.js?v=56ea0924c7', 'data/comms.js?v=2290318a90', 'data/comms-text.js?v=b3e44ff584', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=26d28c122a'],
-  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=afae622e1d', 'platforms.js?v=808f2e407b', 'views.js?v=7f167d594e', 'feedback.js?v=0e0c663a1a'],
+  data: ['review.config.js?v=0bccd56512', 'data/ui.js?v=4ca5dbe899', 'data/ui-platforms.js?v=9cb411e195', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=98ca1ee752', 'data/journeys.js?v=76dfa224ff', 'data/people.js?v=376a947d32', 'data/calendar.js?v=56ea0924c7', 'data/comms.js?v=2290318a90', 'data/comms-text.js?v=b3e44ff584', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=0e1a71e749'],
+  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=808f2e407b', 'views.js?v=7f167d594e', 'feedback.js?v=0e0c663a1a'],
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
