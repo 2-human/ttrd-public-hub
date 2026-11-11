@@ -598,3 +598,10 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .vt-colhead{display:flex;gap:10px;align-items:baseline;font-size:14px}
 .app-body .vt-dl{display:flex;gap:6px;flex-wrap:wrap}
 .app-body .vt-built{margin:0 0 12px}
+/* the step drawer's email versions (views.js stepEmail): a tab per version, the Vault's email box at drawer width */
+.app-body .sv-bar{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.app-body .sv-note{margin:0 0 8px}
+.app-body .sv-open{margin:0 0 10px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.app-body .sv-open .vt-btn{display:inline-block}
+.app-body .sv-meta{margin:0 0 12px;grid-template-columns:90px 1fr}
+.app-body .sv .vbox{width:100%}
