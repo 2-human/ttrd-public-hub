@@ -23,7 +23,7 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=db22e3dc0a', 'data/ui.js?v=9219328ba4', 'data/ui-platforms.js?v=9cb411e195', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=9522260586', 'data/journeys.js?v=4864107d97', 'data/people.js?v=48c45a8b6b', 'data/calendar.js?v=041c857999', 'data/comms.js?v=a04cd4f398', 'data/comms-text.js?v=d7d23e3a42', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=cccbbcaf41', 'data/vault-bf26.js?v=e8fd37f1d4', 'data/vault-bf26h.js?v=9d2fd637c5'],
+  data: ['review.config.js?v=db22e3dc0a', 'data/ui.js?v=9219328ba4', 'data/ui-platforms.js?v=9cb411e195', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=2967897ab3', 'data/journeys.js?v=4864107d97', 'data/people.js?v=ba5ee70808', 'data/calendar.js?v=3be647e072', 'data/comms.js?v=847bf31e15', 'data/comms-text.js?v=0261e196ae', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=cccbbcaf41', 'data/vault-bf26.js?v=e8fd37f1d4', 'data/vault-bf26h.js?v=9d2fd637c5'],
   views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=808f2e407b', 'views.js?v=9fe71fc0cd', 'vault-view.js?v=8c1d571c28', 'journey-map.js?v=6217811025', 'feedback.js?v=0e0c663a1a', 'public-view.js?v=ee021eddd6'],
   skin: 'skin.css?v=2f9531b0de',   /* chassis 1.3.0: loaded after the chassis styles by Hub.look(), inlined by the bundler */
   labels: {
