@@ -6,8 +6,8 @@
  * The account's `role` claim decides what it reaches, and firebase/firestore.rules enforce the same:
  *   admin, team  answers, QA comments, approvals, PanUI journey drafts; the public-view index (team reads, admin writes)
  *   client       answers only
- * Public view (public-view.js): a page's rendered copy in Storage at hubs/ttrd/public/<token>.json, which anyone holding
- * the token can read (view.html); only admin writes or removes one.
+ * Public view (public-view.js): a share's rendered copy in Storage at hubs/ttrd/public/<token>.json and <token>.<n>.json,
+ * which anyone holding the token can read (view.html); only admin writes or removes one.
  * window.HUB_PUBLIC_SEED = { answers, approvals } (set only by tools/hub/public-refresh.mjs in its headless browser): the
  * store serves those records read-only and connects to nothing, so a refreshed copy shows what the hub shows.
  * Without a backend config the answers stay in this browser (localStorage + IndexedDB). A shared backend that fails is
@@ -172,22 +172,32 @@
         onChange: function (fn) { apprListeners.push(fn); }
       };
     },
-    /* Public view (public-view.js): the index of pages shared without sign-in (team and admin read it) and the copies.
-     * put() uploads the copy first and then writes the index, remove() takes the copy down first: the copy is what makes
-     * a page public, so a half-done step never leaves a page public that the index says is off. Admin only (the rules). */
+    /* Public view (public-view.js): the index of shares (team and admin read it) and their copies. A copy is files:
+     * <token>.json, the manifest, and parts <token>.<n>.json. put() uploads the parts, then the manifest, then drops
+     * parts the last copy had and this one does not, and only then writes the index; remove() takes the manifest down
+     * first, then the parts and the index: the manifest is what makes a link work, so a half-done step never leaves a
+     * link working that the index says is off. Admin only (the rules). */
     publicPages: function () {
       if (!F || !api.canQA()) return null;
-      var path = function (token) { return ROOT + '/public/' + token + '.json'; };
+      var path = function (token, n) { return ROOT + '/public/' + token + (n ? '.' + n : '') + '.json'; };
+      var up = function (p, json) { return F.St.uploadBytes(F.St.ref(F.files, p), new Blob([json], { type: 'application/json' }), { contentType: 'application/json', cacheControl: 'no-cache' }); };
+      var drop = function (p) { return F.St.deleteObject(F.St.ref(F.files, p)).catch(function (e) { if (!e || e.code !== 'storage/object-not-found') throw e; }); };
+      var range = function (from, to) { var o = []; for (var i = from; i < to; i++) o.push(i); return o; };
       return {
         admin: api.user.role === 'admin',
         who: function () { return api.user ? api.user.name : ''; },
         subscribe: function (fn) { return F.Fs.onSnapshot(F.col('public'), function (snap) { var o = {}; snap.forEach(function (d) { o[d.id] = d.data(); }); fn(o); }, function (e) { console.error('[answers] public index', e); fn(null); }); },
-        put: function (key, rec, json) {
-          return F.St.uploadBytes(F.St.ref(F.files, path(rec.token)), new Blob([json], { type: 'application/json' }), { contentType: 'application/json', cacheControl: 'no-cache' })
+        /* files: [manifest, part 1, …]; oldParts: how many files the share had (0 for a new share) */
+        put: function (key, rec, files, oldParts) {
+          var tok = rec.token, n = files.length;
+          return Promise.all(range(1, n).map(function (i) { return up(path(tok, i), files[i]); }))
+            .then(function () { return up(path(tok, 0), files[0]); })
+            .then(function () { return Promise.all(range(n, oldParts || 0).map(function (i) { return drop(path(tok, i)); })); })
             .then(function () { rec = clean(rec); rec.uid = api.user.uid; return F.Fs.setDoc(F.doc('public', key), rec).then(function () { return rec; }); });
         },
-        remove: function (key, token) {
-          return F.St.deleteObject(F.St.ref(F.files, path(token))).catch(function (e) { if (!e || e.code !== 'storage/object-not-found') throw e; })
+        remove: function (key, token, parts) {
+          return drop(path(token, 0))
+            .then(function () { return Promise.all(range(1, parts || 1).map(function (i) { return drop(path(token, i)); })); })
             .then(function () { return F.Fs.deleteDoc(F.doc('public', key)); });
         }
       };

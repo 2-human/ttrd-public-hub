@@ -23,9 +23,9 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=db22e3dc0a', 'data/ui.js?v=9219328ba4', 'data/ui-platforms.js?v=9cb411e195', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=09ef8c5c6c', 'data/journeys.js?v=4864107d97', 'data/people.js?v=ba5ee70808', 'data/calendar.js?v=3be647e072', 'data/comms.js?v=847bf31e15', 'data/comms-text.js?v=0261e196ae', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=a8dedf4f81', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=cccbbcaf41', 'data/vault-bf26.js?v=e8fd37f1d4', 'data/vault-bf26h.js?v=9d2fd637c5'],
-  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=808f2e407b', 'views.js?v=9fe71fc0cd', 'vault-view.js?v=8c1d571c28', 'journey-map.js?v=6217811025', 'feedback.js?v=0e0c663a1a', 'public-view.js?v=ee021eddd6'],
-  skin: 'skin.css?v=2f9531b0de',   /* chassis 1.3.0: loaded after the chassis styles by Hub.look(), inlined by the bundler */
+  data: ['review.config.js?v=db22e3dc0a', 'data/ui.js?v=2b8871f24c', 'data/ui-platforms.js?v=591e0a63a1', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=b18ec69f3a', 'data/journeys.js?v=40238b440d', 'data/people.js?v=38c966136e', 'data/calendar.js?v=3be647e072', 'data/comms.js?v=64debb0697', 'data/comms-text.js?v=ce73d2ce50', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=fcfc6b6f54', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=ac78a7c437', 'data/vault-bf26.js?v=e8fd37f1d4', 'data/vault-bf26h.js?v=9d2fd637c5'],
+  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=548e775966', 'views.js?v=9fe71fc0cd', 'vault-view.js?v=8c1d571c28', 'journey-map.js?v=6217811025', 'feedback.js?v=0e0c663a1a', 'share-rules.js?v=1f5385458a', 'public-view.js?v=7f2d9844c0'],
+  skin: 'skin.css?v=d41098cf2c',   /* chassis 1.3.0: loaded after the chassis styles by Hub.look(), inlined by the bundler */
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
@@ -41,6 +41,7 @@ window.HUB_CONFIG = {
     pubLoading: 'Loading…', pubNotShared: 'This page is not shared.', pubNotSharedBody: 'The link may be old, or the page was taken down. Ask the person who sent it for a new one.',
     pubFailed: 'This page could not be loaded. Reload to try again.', pubPdf: 'Save as PDF', pubClose: 'Close',
     pubFoot: 'A read-only copy, as of {date}.',
+    pubMenu: 'Pages in this link', pubCopyLink: 'Copy link to this screen', pubCopyLinkHint: 'The address of this page, with the drawer that is open', pubCopied: 'Copied',
     /* chassis module words that differ from its defaults (config labels win over module defaults) */
     apprBy: 'Recorded by', apprNote: 'Note (optional)', apprNew: 'No decision yet', cmCount: 'Comments: {n}',
     /* a notice at the top of a section's pages (notice:<section id>, noticeLabel:<section id>); the general speculative notice was removed on 10 Nov (Miloš) */
