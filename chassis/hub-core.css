@@ -139,14 +139,19 @@ html:has(.app-body){overflow:hidden}
   .app-body{height:auto;overflow:visible;display:block}.app-grid{display:block}
   .app-main,.app-nav{overflow:visible}.app-main{padding:0;margin:0!important}
   .app-nav,.app-drawer,.app-scrim,.app-menu,.bar-right,.hub-skip,.hub-status,.bc-dd,.search,.tk-tools{display:none!important}
+  /* the review widget's chrome and anything it marks to skip; the classes it puts on content (anchors, highlights) stay */
+  .review-sidebar,.review-sidebar-toggle,.review-toggle,.review-toggle-btn,.review-banner,.review-floating-pill,.review-pill-container,.review-modal,.review-modal-backdrop,.review-toast,.rw-dots,[data-review-skip]{display:none!important}
+  .app-main .scroll,.app-main .table-scroll{overflow:visible}   /* a scrolling box prints as one block; visible lets a long table run on */
+  .app-main tr,.app-main .tile,.app-main h1,.app-main h2,.app-main h3{break-inside:avoid}
+  .app-main h1,.app-main h2,.app-main h3{break-after:avoid}
 }
-/* the shared gate's form, on the hub's tokens; the markup is in chassis/index.gated.html */
+/* the gate's form, on the hub's tokens; the markup is in chassis/index.gated.html (password) and index.key-gated.html (email) */
 #gate{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--hub-bg);color:var(--hub-ink)}
 #gate[hidden]{display:none}#gate [hidden]{display:none}
 #gate-form{width:100%;max-width:380px;background:var(--hub-card);border:1px solid var(--hub-line);border-radius:14px;padding:28px 24px}
 #gate-form h1{margin:0 0 6px;font-size:20px;color:var(--hub-head)}#gate-form p{margin:0 0 18px;color:var(--hub-mute);font-size:14px}
 #gate-form label{display:block;margin-bottom:4px;font-size:14px}
-#gate-pw{width:100%;min-height:44px;padding:10px 12px;font:inherit;border:1px solid var(--hub-line);border-radius:8px;background:var(--hub-bg);color:var(--hub-ink)}
+#gate-pw,#gate-input{width:100%;min-height:44px;padding:10px 12px;font:inherit;border:1px solid var(--hub-line);border-radius:8px;background:var(--hub-bg);color:var(--hub-ink)}
 #gate-form button[type=submit]{width:100%;min-height:44px;margin-top:12px;font:inherit;font-weight:600;border:0;border-radius:8px;background:var(--hub-accent);color:var(--hub-on-accent);cursor:pointer}
 #gate-form button:disabled{opacity:.6;cursor:wait}#gate-msg{min-height:1.5em;margin:12px 0 0;color:var(--hub-bad);font-size:14px}
-#gate-retry{margin-top:12px;font:inherit;background:none;border:0;padding:0;color:var(--hub-ink);text-decoration:underline;cursor:pointer}
+#gate-retry,#gate-out{margin-top:12px;font:inherit;background:none;border:0;padding:0;color:var(--hub-ink);text-decoration:underline;cursor:pointer}

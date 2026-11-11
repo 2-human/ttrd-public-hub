@@ -9,9 +9,10 @@
  *   Hub.onRender(fn), Hub.onDrawer(fn(ref or null))                  hooks; the review widget and modules use them
  * A drawer keeps a trail of the drawers opened from inside it; the back and forward arrows move along it.
  * Rule: every entity exists once; more information about it is a tab on its drawer. References are stable ids, never labels.
- * Hub.boot() loads modules, data and views, then calls Hub.start(). A gate module may replace Hub.loadData. */
+ * Hub.boot() loads modules, data and views, then calls Hub.start(). A gate module may replace Hub.loadData, and calls Hub.look()
+ * first so the gate wears the hub's look (chassis/gate-key.js). */
 (function () {
-  var VERSION = '1.2.0';
+  var VERSION = '1.3.0';
   var $ = function (id) { return document.getElementById(id); };
   var cfg = window.HUB_CONFIG || {};
   var ROUTES = [], DRAWERS = {}, COUNTS = {}, renderHooks = [], drawerHooks = [], readyHooks = [];
@@ -87,7 +88,11 @@
     if (v) document.documentElement.setAttribute('data-theme', v); else document.documentElement.removeAttribute('data-theme');
     if (v) store.set('theme', v); else store.del('theme');
   }
-  function applyConfig() {
+  /* the hub's look, once: language, theme, tokens light and dark, fonts, favicon, title and the hub's own stylesheets (`skin`).
+   * Boot applies it; a gate applies it first, so its card wears the hub's colours and the tab its title before anything opens. */
+  var looked = false;
+  function look() {
+    if (looked) return; looked = true;
     var root = document.documentElement, b = cfg.brand || {}, f = cfg.fonts || {};
     if (cfg.lang) root.setAttribute('lang', cfg.lang);
     if (!cfg.tokensDark && cfg.theme !== 'auto' && cfg.theme !== 'dark') root.setAttribute('data-theme', 'light');
@@ -99,6 +104,12 @@
     if (f.import) { var fl = document.createElement('link'); fl.rel = 'stylesheet'; fl.href = f.import; document.head.appendChild(fl); }
     if (b.favicon) { var ic = document.querySelector('link[rel="icon"]') || document.head.appendChild(Object.assign(document.createElement('link'), { rel: 'icon' })); ic.href = b.favicon; }
     document.title = cfg.title || b.name || 'Hub';
+    /* after the chassis styles, so a skin wins at equal specificity; a bundled page carries its styles inline */
+    if (!window.HUB_BUNDLED) [].concat(cfg.skin || []).forEach(function (href) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l); });
+  }
+  function applyConfig() {
+    var b = cfg.brand || {};
+    look();
     var brand = $('app-brand');
     brand.href = '#' + home();
     brand.innerHTML = (b.logo ? (typeof b.logo === 'string' ? b.logo : '<img src="' + esc(b.logo.src) + '" alt="">') : '') + '<span>' + esc(b.name || '') + '</span>' + (b.sub ? '<small>' + esc(b.sub) + '</small>' : '');
@@ -456,7 +467,7 @@
     routes: function () { return ROUTES.map(function (r) { return r.prefix; }); },
     drawers: function () { return Object.keys(DRAWERS); },
     match: find, tabbed: tabbed, open: openDrawer, close: closeDrawer, tab: pickTab,
-    render: function () { render(true); }, setTheme: setTheme, applyTokens: applyTokens,
+    render: function () { render(true); }, setTheme: setTheme, applyTokens: applyTokens, look: look,
     onRender: function (fn) { renderHooks.push(fn); }, onDrawer: function (fn) { drawerHooks.push(fn); },
     /* a module or view that needs the data registers here; it runs after data and views, before the first render */
     ready: function (fn) { readyHooks.push(fn); },

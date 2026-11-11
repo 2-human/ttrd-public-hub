@@ -5,7 +5,7 @@
 [data-review-mode="on"] body{padding-top:46px}
 
 /* commentable elements */
-[data-review-mode="on"] [data-comment-id]{outline:1px dashed rgba(194,24,122,.35);outline-offset:2px;position:relative}
+[data-review-mode="on"] [data-comment-id]{outline:1px dashed rgba(194,24,122,.35);outline-offset:2px}   /* paint only: never reflows the host (widget 1.6.0) */
 [data-review-mode="on"] [data-comment-id].has-comment{outline:1.5px dashed rgba(194,24,122,.65)}
 [data-review-mode="on"] [data-comment-id].rw-spot{outline:2px solid var(--rw-deep);animation:rwpulse 1.1s ease}
 [data-review-mode="on"] [data-comment-id].rw-active-anchor{outline:2.5px solid var(--rw-deep);outline-offset:2px;box-shadow:0 0 0 4px rgba(194,24,122,.18)}
@@ -91,7 +91,7 @@
  * comment, one green per resolved. */
 [data-review-mode="on"] [data-comment-id].has-comment{outline:1.5px dashed rgba(194,24,122,.65);outline-offset:2px}
 [data-review-mode="on"] [data-comment-id].has-applied-comment{outline:1.5px solid rgba(47,125,78,.6);outline-offset:2px}
-[data-review-mode="on"] .has-comment,[data-review-mode="on"] .has-applied-comment{position:relative}
+/* the dots' containing block is set inline by decorate(), and only on a static element (widget 1.6.0) */
 [data-review-mode="on"] .rw-dots{position:absolute;top:6px;left:100%;margin-left:6px;display:flex;flex-direction:column;gap:4px;z-index:6;pointer-events:none}
 [data-review-mode="on"] .rw-dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 1.5px #fff,0 1px 2px rgba(0,0,0,.3)}
 [data-review-mode="on"] .rw-dot-active{background:var(--rw-deep)}

@@ -266,7 +266,7 @@ function renderAnswers() {
   });
 }
 function decorate() {
-  document.querySelectorAll('.has-comment,.has-applied-comment').forEach(e => e.classList.remove('has-comment', 'has-applied-comment'));
+  document.querySelectorAll('.has-comment,.has-applied-comment').forEach(e => { e.classList.remove('has-comment', 'has-applied-comment'); if (e.dataset.rwPos) { e.style.position = ''; delete e.dataset.rwPos; } });
   document.querySelectorAll('.rw-dots').forEach(e => e.remove());
   if (NOQA) return;
   const by = {};
@@ -275,6 +275,9 @@ function decorate() {
     const r = by[an];
     document.querySelectorAll('[data-comment-id="' + cssq(an) + '"]').forEach(a => {
       a.classList.add(r.active > 0 ? 'has-comment' : 'has-applied-comment');
+      /* review widget 1.6.0: the dots need a containing block, but only a static element gets one, inline, so review
+         mode never reflows a positioned host element (anchor-strategy.md, "Review mode never reflows the host page") */
+      if (getComputedStyle(a).position === 'static') { a.style.position = 'relative'; a.dataset.rwPos = '1'; }
       const d = document.createElement('span'); d.className = 'rw-dots'; d.setAttribute('aria-hidden', 'true');
       let h = ''; for (let i = 0; i < r.active; i++) h += '<i class="rw-dot rw-dot-active"></i>'; for (let i = 0; i < r.resolved; i++) h += '<i class="rw-dot rw-dot-resolved"></i>';
       d.innerHTML = h; a.appendChild(d);
