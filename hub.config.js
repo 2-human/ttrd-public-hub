@@ -23,9 +23,9 @@ window.HUB_CONFIG = {
   storage: { prefix: 'ttrd-hub' },
   modules: ['approval', 'previews', 'charts', 'comments'],
   /* the one ordered file list: locally these load as files; on the mirror gate.js runs them from data/bundle.enc */
-  data: ['review.config.js?v=db22e3dc0a', 'data/ui.js?v=2b8871f24c', 'data/ui-platforms.js?v=4d66601bf5', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=4484394eb0', 'data/journeys.js?v=a64d2fd25b', 'data/people.js?v=fc051d82bf', 'data/calendar.js?v=58cf393097', 'data/comms.js?v=c05972b374', 'data/comms-text.js?v=bf4d76ae07', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=7b7c98d59d', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=d913d47a49', 'data/vault-bf26.js?v=e8fd37f1d4', 'data/vault-bf26h.js?v=9d2fd637c5'],
-  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=f325a614f7', 'views.js?v=9fe71fc0cd', 'vault-view.js?v=8c1d571c28', 'journey-map.js?v=6217811025', 'feedback.js?v=0e0c663a1a', 'share-rules.js?v=1f5385458a', 'public-view.js?v=7f2d9844c0'],
-  skin: 'skin.css?v=d41098cf2c',   /* chassis 1.3.0: loaded after the chassis styles by Hub.look(), inlined by the bundler */
+  data: ['review.config.js?v=db22e3dc0a', 'data/ui.js?v=ef10d685f4', 'data/ui-platforms.js?v=4d66601bf5', 'data/ui-search.js?v=f60f22b753', 'data/core.js?v=7509cdd8ad', 'data/journeys.js?v=a64d2fd25b', 'data/people.js?v=8944d1b822', 'data/calendar.js?v=58cf393097', 'data/comms.js?v=c05972b374', 'data/comms-text.js?v=bf4d76ae07', 'data/questions.js?v=ff093f2c39', 'data/qa-fields.js?v=f2528a85d9', 'data/platforms.js?v=7b7c98d59d', 'data/panui-css.js?v=0e1a71e749', 'data/vault-hw26.js?v=d913d47a49', 'data/vault-bf26.js?v=e8fd37f1d4', 'data/vault-bf26h.js?v=9d2fd637c5'],
+  views: ['search.js?v=cd4f47efe8', 'panui-journey.js?v=854f838c0a', 'platforms.js?v=f325a614f7', 'views.js?v=32845d4f47', 'vault-view.js?v=8c1d571c28', 'brand-view.js?v=7cdbe753b6', 'journey-map.js?v=6217811025', 'feedback.js?v=0e0c663a1a', 'share-rules.js?v=1f5385458a', 'public-view.js?v=7f2d9844c0'],
+  skin: 'skin.css?v=e02d97ed15',   /* chassis 1.3.0: loaded after the chassis styles by Hub.look(), inlined by the bundler */
   labels: {
     /* the sign-in gate (gate.js): the only words a signed-out visitor sees, so they live here, not in the bundle */
     gateTitle: 'TenTrade review hub',
