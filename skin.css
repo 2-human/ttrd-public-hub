@@ -724,3 +724,28 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .cj-ux { table-layout: fixed; width: 100%; }
 .cj-ux th:nth-child(1) { width: 34px; } .cj-ux th:nth-child(2) { width: 36%; } .cj-ux th:nth-child(5) { width: 120px; }
 .cj-ux td { overflow-wrap: break-word; }
+
+/* ─── Tables everywhere (pages and drawers): never split words, scroll when wide, stack when narrow ───
+ * The chassis lets drawer text break anywhere (hub-core.css .drawer-body); inside table cells that shrinks columns to a
+ * letter. Cells break only between words; long links and code may still wrap. Wide tables scroll inside .tblw.
+ * In a narrow space (the page or the drawer under 560 px, whatever the window size) each row becomes a card with the
+ * column name before each value (data-label, set by views.js labelTables). */
+.app-body td, .app-body th { overflow-wrap: break-word; word-break: normal; hyphens: manual; }
+.app-body td :is(a, code) { overflow-wrap: anywhere; }
+.app-body th { white-space: nowrap; }
+.app-body .tblw { overflow-x: auto; -webkit-overflow-scrolling: touch;
+  background: linear-gradient(90deg, var(--hub-bg, #fff) 30%, transparent) left / 24px 100% no-repeat local,
+              linear-gradient(270deg, var(--hub-bg, #fff) 30%, transparent) right / 24px 100% no-repeat local,
+              radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.14), transparent) left / 10px 100% no-repeat scroll,
+              radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.14), transparent) right / 10px 100% no-repeat scroll; }
+.app-body .pg, .app-body .drawer-body { container: hubpane / inline-size; }
+@container hubpane (max-width: 560px) {
+  .tblw table.stack, .tblw table.stack tbody, .tblw table.stack tr, .tblw table.stack td { display: block; width: auto !important; }
+  .tblw table.stack { table-layout: auto; border: 0; }
+  .tblw table.stack thead { display: none; }
+  .tblw table.stack tr { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; margin: 0 0 8px; background: #fff; }
+  .tblw table.stack td { border: 0; padding: 4px 0; }
+  .tblw table.stack td::before { content: attr(data-label); display: block; font-weight: 600; color: var(--mute); font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  .tblw table.stack td[data-label=""]::before, .tblw table.stack td:empty { display: none; }
+  .app-body .tblw { background: none; }
+}
