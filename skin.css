@@ -659,3 +659,60 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .sv-open .vt-btn{display:inline-block}
 .app-body .sv-meta{margin:0 0 12px;grid-template-columns:90px 1fr}
 .app-body .sv .vbox{width:100%}
+
+/* ─── Client journey map (client-journey-view.js, page kind cjmap) ─── */
+.cj { --cj-ok: #1f9d55; --cj-issue: #d9822b; --cj-gap: #c93c3c; --cj-prop: #6b5bd6; }
+.cj-intro { margin-bottom: 10px; }
+.cj-bar { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 4px 0 10px; font-size: 12.5px; }
+.cj-grp { display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.cj-grp em { font-style: normal; color: var(--mute); margin-right: 4px; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; }
+.cj-bar button { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 3px 10px; font: inherit; cursor: pointer; color: var(--ink); }
+.cj-bar button.on { border-color: var(--brand); background: var(--brand-soft); }
+.cj-bar button i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; background: #999; }
+.cj-bar .e-flow i { background: #3b3a46; } .cj-bar .e-trigger i { background: var(--brand); } .cj-bar .e-alt i { background: repeating-linear-gradient(90deg,#999 0 4px,transparent 4px 7px); }
+.cj-bar .st-ok i { background: var(--cj-ok); } .cj-bar .st-issue i { background: var(--cj-issue); } .cj-bar .st-gap i { background: var(--cj-gap); } .cj-bar .st-proposed i { background: var(--cj-prop); }
+.cj-bar small { color: var(--mute); }
+.cj-z { min-width: 40px; text-align: center; }
+.cj-key span { color: var(--mute); margin-right: 8px; } .cj-key b { color: var(--ink); margin-right: 3px; }
+.cj-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; max-height: calc(100vh - 200px); }
+.cj-grid { display: grid; position: relative; grid-auto-rows: minmax(64px, auto); min-width: max-content; }
+.cj-corner, .cj-stage { position: sticky; top: 0; z-index: 4; background: var(--soft); border-bottom: 1px solid var(--line); padding: 8px 10px; }
+.cj-corner { left: 0; z-index: 6; font-size: 11px; color: var(--mute); grid-column: 1; grid-row: 1; }
+.cj-stage b { display: block; font-size: 13px; } .cj-stage small, .cj-lane small { display: block; color: var(--mute); font-size: 11px; line-height: 1.3; }
+.cj-lane { position: sticky; left: 0; z-index: 3; background: #fff; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px; }
+.cj-lane.odd, .cj-bg.odd { background: #fbfafd; }
+.cj-lane b { font-size: 12.5px; }
+.cj-bg { border-bottom: 1px solid var(--line); border-left: 1px dashed #eeedf3; z-index: 0; }
+.cj-cell { z-index: 2; padding: 6px; display: flex; flex-direction: column; gap: 6px; align-self: start; }
+.cj-cell.bar { padding: 4px 6px; }
+.cj-card { display: block; position: relative; background: #fff; border: 1px solid var(--line); border-left: 4px solid #aaa; border-radius: 8px; padding: 6px 8px 6px 26px; color: var(--ink); text-decoration: none; font-size: 12px; line-height: 1.3; box-shadow: 0 1px 2px rgba(20,20,40,.05); transition: opacity .15s, box-shadow .15s; }
+.cj-card:hover, .cj-card.sel { box-shadow: 0 0 0 2px var(--brand); }
+.cj-card b { display: block; font-size: 12.5px; }
+.cj-card small { display: block; color: var(--mute); margin-top: 2px; }
+.cj-ic { position: absolute; left: 7px; top: 6px; font-size: 12px; color: #888; }
+.cj-card.st-ok { border-left-color: var(--cj-ok); } .cj-card.st-issue { border-left-color: var(--cj-issue); }
+.cj-card.st-gap { border-left-color: var(--cj-gap); background: #fff7f7; } .cj-card.st-proposed { border-left-color: var(--cj-prop); border-style: dashed dashed dashed solid; background: #faf9ff; }
+.cj-card.k-journey { background: linear-gradient(90deg, #f6f1fb, #fff); }
+.cj-card.k-journey.st-proposed { background: linear-gradient(90deg, #f1effd, #fff); }
+.cj-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.cj-tags i { font-style: normal; font-size: 10.5px; background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; color: var(--mute); }
+.cj-tags i.t-ux { color: #9a5a12; border-color: #f0d6b6; background: #fff6ea; }
+.cj-edges { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 1; overflow: visible; }
+.cj-edges path.e { fill: none; stroke-width: 1.4; opacity: .55; transition: opacity .15s; }
+.cj-edges .e-flow { stroke: #3b3a46; } .cj-edges .e-trigger { stroke: var(--brand); stroke-dasharray: 0; } .cj-edges .e-alt { stroke: #999; stroke-dasharray: 5 4; }
+.cj-edges .m-flow { fill: #3b3a46; } .cj-edges .m-trigger { fill: var(--brand); } .cj-edges .m-alt { fill: #999; }
+.cj-grid.focus path.e { opacity: .08; } .cj-grid.focus path.e.hl { opacity: 1; stroke-width: 2.2; }
+.cj.no-flow path.e-flow, .cj.no-trigger path.e-trigger, .cj.no-alt path.e-alt { display: none; }
+.cj.only-ok .cj-card:not(.st-ok), .cj.only-issue .cj-card:not(.st-issue), .cj.only-gap .cj-card:not(.st-gap), .cj.only-proposed .cj-card:not(.st-proposed) { opacity: .2; }
+.cj-st { display: inline-block; border-radius: 4px; padding: 0 6px; font-size: 11px; color: #fff; background: #888; margin-right: 4px; }
+.cj-st.st-ok { background: #1f9d55; } .cj-st.st-issue { background: #d9822b; } .cj-st.st-gap { background: #c93c3c; } .cj-st.st-proposed { background: #6b5bd6; }
+.cj-tbl { font-size: 12.5px; } .cj-tbl td { vertical-align: top; }
+.cj-chips { display: flex; flex-wrap: wrap; gap: 4px; } .cj-chips span, .cj-chips a { border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; font-size: 12px; }
+.cj-shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.cj-shots figure { margin: 0; cursor: zoom-in; } .cj-shots img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+.cj-shots figure.big { grid-column: 1 / -1; cursor: zoom-out; }
+.cj-shots figcaption { font-size: 11.5px; color: var(--mute); margin-top: 3px; }
+.cj-conn { list-style: none; padding: 0; } .cj-conn li { margin: 3px 0; } .cj-conn small { color: var(--mute); }
+.cj-ek { font-size: 10.5px; border-radius: 4px; padding: 0 5px; border: 1px solid var(--line); color: var(--mute); }
+.cj-ek.e-trigger { color: var(--brand); border-color: var(--brand-soft); }
+.cj-tbl td:first-child, .cj-tbl th:first-child { white-space: nowrap; }
