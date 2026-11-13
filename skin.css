@@ -720,3 +720,7 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 /* zoomed out: only the client path, plus whatever a hovered or open card touches */
 .cj.far .cj-edges path.e-trigger:not(.hl), .cj.far .cj-edges path.e-alt:not(.hl) { display: none; }
 .cj-farhint { display: none; font-size: 11.5px; color: var(--mute); } .cj.far .cj-farhint { display: inline; }
+.cj-tbl th, .cj-tbl td { word-break: normal; overflow-wrap: normal; hyphens: none; }
+.cj-ux { table-layout: fixed; width: 100%; }
+.cj-ux th:nth-child(1) { width: 34px; } .cj-ux th:nth-child(2) { width: 36%; } .cj-ux th:nth-child(5) { width: 120px; }
+.cj-ux td { overflow-wrap: break-word; }
