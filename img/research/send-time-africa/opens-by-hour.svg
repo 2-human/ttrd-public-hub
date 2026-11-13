@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">
+<rect width="760" height="330" rx="8" fill="#ffffff"/>
+<text x="46" y="18" fill="#6b6a66" font-size="14" font-weight="600">Opens: share of the day&#39;s opens in each local hour</text>
+<line x1="46" y1="36" x2="68" y2="36" stroke="#2a78d6" stroke-width="2.5" stroke-dasharray=""/>
+<text x="73" y="40" fill="#6b6a66">Nigeria (WAT)</text>
+<line x1="177" y1="36" x2="199" y2="36" stroke="#eb6834" stroke-width="2.5" stroke-dasharray="6 3"/>
+<text x="204" y="40" fill="#6b6a66">All clients (GMT)</text>
+<line x1="336" y1="36" x2="358" y2="36" stroke="#1baf7a" stroke-width="2.5" stroke-dasharray="2 2"/>
+<text x="363" y="40" fill="#6b6a66">Ghana (GMT, FXBO)</text>
+<line x1="495" y1="36" x2="517" y2="36" stroke="#c98500" stroke-width="2.5" stroke-dasharray="8 3 2 3"/>
+<text x="522" y="40" fill="#6b6a66">Kenya (EAT, FXBO)</text>
+<line x1="46" y1="286.0" x2="744" y2="286.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="290.0" fill="#8a8984" text-anchor="end">0%</text>
+<line x1="46" y1="240.0" x2="744" y2="240.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="244.0" fill="#8a8984" text-anchor="end">2%</text>
+<line x1="46" y1="194.0" x2="744" y2="194.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="198.0" fill="#8a8984" text-anchor="end">4%</text>
+<line x1="46" y1="148.0" x2="744" y2="148.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="152.0" fill="#8a8984" text-anchor="end">6%</text>
+<line x1="46" y1="102.0" x2="744" y2="102.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="106.0" fill="#8a8984" text-anchor="end">8%</text>
+<line x1="46" y1="56.0" x2="744" y2="56.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="60.0" fill="#8a8984" text-anchor="end">10%</text>
+<text x="46.0" y="304" fill="#8a8984" text-anchor="middle">00</text>
+<text x="106.7" y="304" fill="#8a8984" text-anchor="middle">02</text>
+<text x="167.4" y="304" fill="#8a8984" text-anchor="middle">04</text>
+<text x="228.1" y="304" fill="#8a8984" text-anchor="middle">06</text>
+<text x="288.8" y="304" fill="#8a8984" text-anchor="middle">08</text>
+<text x="349.5" y="304" fill="#8a8984" text-anchor="middle">10</text>
+<text x="410.2" y="304" fill="#8a8984" text-anchor="middle">12</text>
+<text x="470.9" y="304" fill="#8a8984" text-anchor="middle">14</text>
+<text x="531.6" y="304" fill="#8a8984" text-anchor="middle">16</text>
+<text x="592.3" y="304" fill="#8a8984" text-anchor="middle">18</text>
+<text x="653.0" y="304" fill="#8a8984" text-anchor="middle">20</text>
+<text x="713.7" y="304" fill="#8a8984" text-anchor="middle">22</text>
+<text x="46" y="324" fill="#8a8984">local hour</text>
+<polyline points="46.0,205.9 76.3,213.7 106.7,237.7 137.0,244.6 167.4,245.0 197.7,220.2 228.1,211.9 258.4,207.7 288.8,193.9 319.1,181.9 349.5,204.0 379.8,187.0 410.2,183.3 440.5,189.3 470.9,172.7 501.2,174.1 531.6,161.7 561.9,171.3 592.3,165.8 622.6,156.2 653.0,154.3 683.3,133.1 713.7,174.6 744.0,174.1" fill="none" stroke="#2a78d6" stroke-width="2.2" stroke-dasharray="" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="46.0,212.4 76.3,223.4 106.7,231.3 137.0,237.8 167.4,217.9 197.7,205.0 228.1,195.0 258.4,189.5 288.8,180.1 319.1,186.6 349.5,168.7 379.8,160.7 410.2,170.2 440.5,186.1 470.9,168.7 501.2,178.6 531.6,177.1 561.9,180.6 592.3,164.7 622.6,183.6 653.0,176.1 683.3,177.6 713.7,190.5 744.0,202.0" fill="none" stroke="#eb6834" stroke-width="2.2" stroke-dasharray="6 3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="46.0,252.5 76.3,244.1 106.7,265.1 137.0,273.4 167.4,263.0 197.7,260.9 228.1,189.6 258.4,198.0 288.8,172.9 319.1,189.6 349.5,110.0 379.8,114.2 410.2,101.7 440.5,131.0 470.9,160.3 501.2,101.7 531.6,145.7 561.9,168.7 592.3,195.9 622.6,172.9 653.0,208.5 683.3,204.3 713.7,200.1 744.0,239.9" fill="none" stroke="#1baf7a" stroke-width="2.2" stroke-dasharray="2 2" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="46.0,226.3 76.3,259.6 106.7,259.6 137.0,270.2 167.4,270.2 197.7,252.6 228.1,252.6 258.4,212.2 288.8,203.4 319.1,184.1 349.5,147.2 379.8,163.0 410.2,150.7 440.5,156.0 470.9,134.9 501.2,157.7 531.6,145.4 561.9,156.0 592.3,145.4 622.6,108.5 653.0,124.3 683.3,173.5 713.7,194.6 744.0,215.7" fill="none" stroke="#c98500" stroke-width="2.2" stroke-dasharray="8 3 2 3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="744" y="324" fill="#8a8984" text-anchor="end" font-size="11">4.2% = an average hour; opens within 10 min of sending left out</text>
+</svg>

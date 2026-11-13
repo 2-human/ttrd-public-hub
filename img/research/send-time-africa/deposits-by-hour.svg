@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">
+<rect width="760" height="330" rx="8" fill="#ffffff"/>
+<text x="46" y="18" fill="#6b6a66" font-size="14" font-weight="600">Deposits (PanUI conversions): share in each local hour</text>
+<line x1="46" y1="36" x2="68" y2="36" stroke="#2a78d6" stroke-width="2.5" stroke-dasharray=""/>
+<text x="73" y="40" fill="#6b6a66">Nigeria (WAT)</text>
+<line x1="177" y1="36" x2="199" y2="36" stroke="#eb6834" stroke-width="2.5" stroke-dasharray="6 3"/>
+<text x="204" y="40" fill="#6b6a66">All clients (GMT)</text>
+<line x1="336" y1="36" x2="358" y2="36" stroke="#6250d6" stroke-width="2.5" stroke-dasharray="1 3"/>
+<text x="363" y="40" fill="#6b6a66">Managers&#39; webinar clients (GMT)</text>
+<line x1="46" y1="286.0" x2="744" y2="286.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="290.0" fill="#8a8984" text-anchor="end">0%</text>
+<line x1="46" y1="240.0" x2="744" y2="240.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="244.0" fill="#8a8984" text-anchor="end">2%</text>
+<line x1="46" y1="194.0" x2="744" y2="194.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="198.0" fill="#8a8984" text-anchor="end">4%</text>
+<line x1="46" y1="148.0" x2="744" y2="148.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="152.0" fill="#8a8984" text-anchor="end">6%</text>
+<line x1="46" y1="102.0" x2="744" y2="102.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="106.0" fill="#8a8984" text-anchor="end">8%</text>
+<line x1="46" y1="56.0" x2="744" y2="56.0" stroke="#d9d8d2" stroke-width="0.7"/>
+<text x="40" y="60.0" fill="#8a8984" text-anchor="end">10%</text>
+<text x="46.0" y="304" fill="#8a8984" text-anchor="middle">00</text>
+<text x="106.7" y="304" fill="#8a8984" text-anchor="middle">02</text>
+<text x="167.4" y="304" fill="#8a8984" text-anchor="middle">04</text>
+<text x="228.1" y="304" fill="#8a8984" text-anchor="middle">06</text>
+<text x="288.8" y="304" fill="#8a8984" text-anchor="middle">08</text>
+<text x="349.5" y="304" fill="#8a8984" text-anchor="middle">10</text>
+<text x="410.2" y="304" fill="#8a8984" text-anchor="middle">12</text>
+<text x="470.9" y="304" fill="#8a8984" text-anchor="middle">14</text>
+<text x="531.6" y="304" fill="#8a8984" text-anchor="middle">16</text>
+<text x="592.3" y="304" fill="#8a8984" text-anchor="middle">18</text>
+<text x="653.0" y="304" fill="#8a8984" text-anchor="middle">20</text>
+<text x="713.7" y="304" fill="#8a8984" text-anchor="middle">22</text>
+<text x="46" y="324" fill="#8a8984">local hour</text>
+<polyline points="46.0,184.8 76.3,210.1 106.7,210.1 137.0,226.2 167.4,237.7 197.7,253.8 228.1,276.8 258.4,253.8 288.8,235.4 319.1,196.3 349.5,189.4 379.8,173.3 410.2,157.2 440.5,138.8 470.9,152.6 501.2,161.8 531.6,141.1 561.9,180.2 592.3,154.9 622.6,125.0 653.0,168.7 683.3,175.6 713.7,175.6 744.0,184.8" fill="none" stroke="#2a78d6" stroke-width="2.2" stroke-dasharray="" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="46.0,226.2 76.3,246.9 106.7,258.4 137.0,265.3 167.4,272.2 197.7,269.9 228.1,263.0 258.4,240.0 288.8,228.5 319.1,210.1 349.5,150.3 379.8,97.4 410.2,99.7 440.5,115.8 470.9,95.1 501.2,113.5 531.6,154.9 561.9,173.3 592.3,122.7 622.6,141.1 653.0,187.1 683.3,200.9 713.7,207.8 744.0,226.2" fill="none" stroke="#eb6834" stroke-width="2.2" stroke-dasharray="6 3" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="46.0,223.9 76.3,237.7 106.7,244.6 137.0,258.4 167.4,260.7 197.7,269.9 228.1,251.5 258.4,217.0 288.8,177.9 319.1,189.4 349.5,152.6 379.8,122.7 410.2,145.7 440.5,129.6 470.9,108.9 501.2,85.9 531.6,173.3 561.9,182.5 592.3,161.8 622.6,166.4 653.0,196.3 683.3,184.8 713.7,200.9 744.0,221.6" fill="none" stroke="#6250d6" stroke-width="2.2" stroke-dasharray="1 3" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="744" y="324" fill="#8a8984" text-anchor="end" font-size="11">8,272 conversions, 14 blasts</text>
+</svg>
