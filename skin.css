@@ -675,7 +675,7 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .cj-z { min-width: 40px; text-align: center; }
 .cj-key span { color: var(--mute); margin-right: 8px; } .cj-key b { color: var(--ink); margin-right: 3px; }
 .cj-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: #fff; max-height: calc(100vh - 200px); }
-.cj-grid { display: grid; position: relative; grid-auto-rows: minmax(64px, auto); min-width: max-content; }
+.cj-grid { display: grid; position: relative; grid-auto-rows: minmax(64px, auto); }
 .cj-corner, .cj-stage { position: sticky; top: 0; z-index: 4; background: var(--soft); border-bottom: 1px solid var(--line); padding: 8px 10px; }
 .cj-corner { left: 0; z-index: 6; font-size: 11px; color: var(--mute); grid-column: 1; grid-row: 1; }
 .cj-stage b { display: block; font-size: 13px; } .cj-stage small, .cj-lane small { display: block; color: var(--mute); font-size: 11px; line-height: 1.3; }
@@ -716,3 +716,7 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .cj-ek { font-size: 10.5px; border-radius: 4px; padding: 0 5px; border: 1px solid var(--line); color: var(--mute); }
 .cj-ek.e-trigger { color: var(--brand); border-color: var(--brand-soft); }
 .cj-tbl td:first-child, .cj-tbl th:first-child { white-space: nowrap; }
+.cj-cell.two { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+/* zoomed out: only the client path, plus whatever a hovered or open card touches */
+.cj.far .cj-edges path.e-trigger:not(.hl), .cj.far .cj-edges path.e-alt:not(.hl) { display: none; }
+.cj-farhint { display: none; font-size: 11.5px; color: var(--mute); } .cj.far .cj-farhint { display: inline; }
