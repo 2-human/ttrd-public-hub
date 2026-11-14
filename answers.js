@@ -7,7 +7,9 @@
  *   admin, team  answers, QA comments, approvals, PanUI journey drafts; the public-view index (team reads, admin writes)
  *   client       answers only
  * Public view (public-view.js): a share's rendered copy in Storage at hubs/ttrd/public/<token>.json and <token>.<n>.json,
- * which anyone holding the token can read (view.html); only admin writes or removes one.
+ * which anyone holding the token can read (view.html); only admin writes or removes one. The stored copy of every page
+ * (hubs/ttrd/prebuilt, made at publish by tools/hub/public-prebuild.mjs) is read by admin accounts only, never written
+ * here: publicPages().prebuilt().
  * window.HUB_PUBLIC_SEED = { answers, approvals } (set only by tools/hub/public-refresh.mjs in its headless browser): the
  * store serves those records read-only and connects to nothing, so a refreshed copy shows what the hub shows.
  * Without a backend config the answers stay in this browser (localStorage + IndexedDB). A shared backend that fails is
@@ -199,6 +201,30 @@
           return drop(path(token, 0))
             .then(function () { return Promise.all(range(1, parts || 1).map(function (i) { return drop(path(token, i)); })); })
             .then(function () { return F.Fs.deleteDoc(F.doc('public', key)); });
+        },
+        /* the stored copy of every page (tools/hub/public-prebuild.mjs, made at each publish), admin only: the index
+         * hubs/ttrd/prebuilt/{pageKey} ({ route, hash, build, builtAt, parts, held, … }) and each copy's files
+         * hubs/ttrd/prebuilt/<hash>.json and <hash>.<n>.json, the bytes of one JSON cut in order. load(rec) joins them; a
+         * file refused or not found (403, 404) is a missing copy (null), never an error. The copy's takenAt becomes its
+         * row's builtAt: a stored copy is "as of the last publish". */
+        prebuilt: function () {
+          if (api.user.role !== 'admin') return null;
+          var file = function (hash, n) { return ROOT + '/prebuilt/' + hash + (n ? '.' + n : '') + '.json'; };
+          var gone = function (e) { return !!e && (e.code === 'storage/object-not-found' || e.code === 'storage/unauthorized'); };
+          return {
+            subscribe: function (fn) { return F.Fs.onSnapshot(F.col('prebuilt'), function (snap) { var o = {}; snap.forEach(function (d) { o[d.id] = d.data(); }); fn(o); }, function (e) { console.warn('[answers] stored copies', e.code || e); fn(null); }); },
+            load: function (rec) {
+              if (!rec || !/^[0-9a-f]{32}$/.test(rec.hash || '')) return Promise.resolve(null);
+              var n = Math.max(1, Math.min(999, Math.floor(+rec.parts || 1)));
+              return Promise.all(range(0, n).map(function (i) { return F.St.getBytes(F.St.ref(F.files, file(rec.hash, i))); })).then(function (bufs) {
+                var len = bufs.reduce(function (a, b) { return a + b.byteLength; }, 0), all = new Uint8Array(len), at = 0;
+                bufs.forEach(function (b) { all.set(new Uint8Array(b), at); at += b.byteLength; });
+                var copy = JSON.parse(new TextDecoder().decode(all));
+                if (rec.builtAt) copy.takenAt = new Date(rec.builtAt).toISOString();
+                return copy;
+              }, function (e) { if (gone(e)) return null; throw e; });
+            }
+          };
         }
       };
     },

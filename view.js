@@ -5,6 +5,9 @@
  * drawers (data-pd), the Vault's Desktop/Phone switch, Save as PDF and “Copy link to this screen”.
  * Every screen has its own address, view.html#<token>/<page>?<view>&d=<drawer>&dt=<tab>, so Back and Forward work and a
  * page with a drawer open can be sent as it is. A copy made on 10 Nov (one page, one file) still opens.
+ * A copy since 14 Nov carries gen in its manifest and in every part (public-view.js packed()): a part of another gen, or
+ * one that is gone, means the share was refreshed while this page was open, so the manifest is read once more and the
+ * screen drawn again, instead of "could not be loaded". A manifest without gen (older copies) works as before.
  * Nothing here leads to a hub page outside the copy: the copy has no such links.
  * Words: the pub* labels in hub.config.js. Colours: the tokens in hub.config.js, set the way the chassis sets them. */
 (function () {
@@ -47,9 +50,41 @@
       return r.json();
     });
   }
+  /* a part of the copy the manifest describes: one that is gone, or of another gen (the share was refreshed while this
+   * page was open: the parts are uploaded before the manifest), is stale, and go() reads the manifest again once */
+  function stale(why) { var e = new Error(why); e.stale = true; return e; }
   function part(n) {
-    if (!PARTS[n]) { PARTS[n] = fetchJson(n).then(function (p) { if (!p) { throw new Error('part ' + n + ' missing'); } return p; }); PARTS[n].catch(function () { delete PARTS[n]; }); }
+    if (!PARTS[n]) {
+      var man = MAN;
+      PARTS[n] = fetchJson(n).then(function (p) {
+        if (!p) { throw stale('part ' + n + ' missing'); }
+        if ((man.gen || p.gen) && p.gen !== man.gen) { throw stale('part ' + n + ' of another copy'); }
+        return p;
+      });
+      PARTS[n].catch(function () { delete PARTS[n]; });
+    }
     return PARTS[n];
+  }
+  /* a manifest as this page reads it, or null when it is not one */
+  function manifest(data) {
+    if (data && data.v === 1 && data.views && data.views[data.first] != null) { return fromV1(data); }
+    if (data && data.v === 2 && data.menu && data.menu.length && data.views && data.views[data.first] != null) { return data; }
+    return null;
+  }
+  /* the manifest read again (a stale part): the parts loaded so far dropped, the menu drawn again. A refresh uploads
+   * its parts before its manifest, so a manifest still of the gen held means the new one is on its way: read again a
+   * few times, 1.5 s apart, before going on with what is there */
+  function renew(tries) {
+    var was = MAN && MAN.gen;
+    tries = tries == null ? 4 : tries;
+    return fetchJson(0).then(function (data) {
+      if (was && data && data.gen === was && tries > 0) {
+        return new Promise(function (ok) { setTimeout(ok, 1500); }).then(function () { return renew(tries - 1); });
+      }
+      PARTS = {};
+      var m = manifest(data); if (!m) { throw new Error('gone'); }
+      MAN = m; closeDrawer(false); CUR.view = ''; drawMenu();
+    });
   }
   /* a 10 Nov copy (one page in one file, views keyed by their query alone) read as a manifest with its one part loaded */
   function fromV1(d) {
@@ -190,14 +225,17 @@
   }
 
   /* ─── one screen: a view, and a drawer on it or none ─── */
-  function go(s, push) {
+  function go(s, push, again) {
     var view = resolveView(s.view || CUR.view);
     return showView(view, push && view !== CUR.view).then(function () {
       if (s.ref && MAN.drawers[s.ref] != null) {
         return (DRAWER && DRAWER.ref === s.ref ? Promise.resolve(paint(s.tab || DRAWER.it.tabs[0][0])) : openDrawer(s.ref, s.tab)).then(function () { write(push); });
       }
       closeDrawer(push); write(push);
-    }).catch(function (e) { console.error('[view]', e); message(t('pubFailed')); });
+    }).catch(function (e) {
+      if (e && e.stale && !again) { var at = { view: s.view || CUR.view, ref: s.ref, tab: s.tab }; return renew().then(function () { return go(at, push, true); }, function (e2) { console.error('[view]', e2); message(t('pubNotShared'), t('pubNotSharedBody')); }); }
+      console.error('[view]', e); message(t('pubFailed'));
+    });
   }
 
   /* ─── events ─── */
@@ -244,9 +282,8 @@
   $('app-main').innerHTML = '<div class="pg"><p class="hint">' + esc(t('pubLoading')) + '</p></div>';
   if (!/^[A-Za-z0-9_-]{22}$/.test(TOKEN) || !fb.storageBucket) { message(t('pubNotShared'), t('pubNotSharedBody')); return; }
   fetchJson(0).then(function (data) {
-    if (data && data.v === 1 && data.views && data.views[data.first] != null) { MAN = fromV1(data); }
-    else if (data && data.v === 2 && data.menu && data.menu.length && data.views && data.views[data.first] != null) { MAN = data; }
-    else { message(t('pubNotShared'), t('pubNotSharedBody')); return; }
+    MAN = manifest(data);
+    if (!MAN) { message(t('pubNotShared'), t('pubNotSharedBody')); return; }
     var p = $('pv-print'); p.textContent = t('pubPdf'); p.hidden = false;
     var sh = $('pv-share'); sh.textContent = t('pubCopyLink'); sh.title = t('pubCopyLinkHint'); sh.hidden = false;
     drawMenu();

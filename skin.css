@@ -496,6 +496,11 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .pv-panel h3{margin:0 0 6px;font-size:14px}
 .app-body .pv-panel p{margin:6px 0}
 .app-body .pv-panel .pv-msg{font-weight:600}
+.app-body .pv-panel .pv-help{margin:10px 0 0;border-top:1px solid var(--line);padding-top:6px}
+.app-body .pv-panel .pv-help summary{cursor:pointer;font-size:12.5px;color:var(--mute)}
+.app-body .pv-panel .pv-prep::before{content:'';display:inline-block;width:10px;height:10px;margin-right:7px;border:2px solid var(--line);border-top-color:var(--brand);border-radius:50%;vertical-align:-1px;animation:pv-spin .8s linear infinite}
+@keyframes pv-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.app-body .pv-panel .pv-prep::before{animation:none}}
 .app-body .pv-do{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
 .app-body .pv-do .btn{font:inherit;font-size:12.5px;padding:5px 11px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);cursor:pointer;text-decoration:none}
 .app-body .pv-do .btn:hover{border-color:var(--brand);color:var(--brand)}
