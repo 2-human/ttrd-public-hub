@@ -651,6 +651,11 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .app-body .vt-row{display:flex;align-items:center;gap:10px;margin:4px 0}
 .app-body .vt-lab{flex:0 0 88px;font:500 12px/1.2 var(--body);color:var(--muted,#666)}
 .app-body .vt-seg{display:flex;flex-wrap:wrap;gap:6px}
+.app-body .vt-about{margin:10px 0 6px}
+.vt-notebody h4{margin:18px 0 6px}
+.vt-notebody h4:first-child{margin-top:0}
+.vt-notebody ul,.vt-notebody ol{margin:0 0 6px;padding-left:20px}
+.vt-notebody li{margin:4px 0;line-height:1.5}
 .app-body .vt-tab.off{opacity:.5;border-style:dashed}
 @media (max-width:600px){.app-body .vt-row{align-items:flex-start;flex-direction:column;gap:4px}.app-body .vt-lab{flex:none}}
 .app-body .vt-note{max-width:760px;margin:10px 0 0}
