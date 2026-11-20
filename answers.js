@@ -238,6 +238,23 @@
         remove: function (id) { return F.Fs.deleteDoc(F.doc('journeyDrafts', id)); },
         who: function () { return api.user ? api.user.name : ''; }
       };
+    },
+    /* Inbox set-up (inbox-view.js, 20 Nov 2026): the test addresses the live page treats as a client or a lead, and every
+     * run of the page (branch, answers, Done, the PanUI test queue). Team and admin accounts only; nothing here sends. */
+    inbox: function () {
+      if (!F || !api.canQA()) return null;
+      var sub = function (n) { return function (fn) { return F.Fs.onSnapshot(F.col(n), function (snap) { var o = {}; snap.forEach(function (d) { o[d.id] = d.data(); }); fn(o); }, fail); }; };
+      var own = function (rec) { rec = clean(rec); rec.uid = api.user.uid; return rec; };
+      return {
+        tests: { subscribe: sub('inboxTests'),
+          save: function (id, rec) { return F.Fs.setDoc(F.doc('inboxTests', id), own(rec)); },
+          remove: function (id) { return F.Fs.deleteDoc(F.doc('inboxTests', id)); } },
+        runs: { subscribe: sub('inboxRuns'),
+          create: function (id, rec) { return F.Fs.setDoc(F.doc('inboxRuns', id), own(rec)).then(function () { return id; }); },
+          update: function (id, rec) { rec = clean(rec); return F.Fs.setDoc(F.doc('inboxRuns', id), rec); },
+          remove: function (id) { return F.Fs.deleteDoc(F.doc('inboxRuns', id)); } },
+        who: function () { return api.user ? api.user.name : ''; }
+      };
     }
   };
   window.addEventListener('storage', function (e) { if (e.key === KEY && !F) notify(); });
