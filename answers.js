@@ -109,6 +109,8 @@
       });
     },
     signOut: function () { return AU ? AU.Au.signOut(AU.auth) : Promise.resolve(); },
+    /* the signed-in account's Firebase ID token, for a service that checks the role itself (tools/inbox-mailer) */
+    idToken: function () { return AU && AU.auth.currentUser ? AU.auth.currentUser.getIdToken() : Promise.reject(new Error('signed out')); },
     init: init,
     /* the gate's way in: the hub's decryption keys, which only accounts with a role can read (newest first) */
     gateKeys: function () {
