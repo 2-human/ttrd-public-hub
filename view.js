@@ -154,6 +154,7 @@
       m.innerHTML = html + '<p class="pv-foot">' + esc(t('pubFoot', { date: day(MAN.takenAt) })) + '</p>';
       var page = MAN.menu.filter(function (x) { return x.route === id.split('?')[0]; })[0];
       document.title = (page && MAN.menu.length > 1 ? page.title + ' · ' : '') + MAN.title + ' · ' + ((cfg.brand || {}).name || '');
+      dropdowns(m);
       setWidth(WIDTH); markMenu(); markSelected();
       m.scrollTop = 0;
       if (focus) { m.focus({ preventScroll: true }); }
@@ -237,6 +238,28 @@
       console.error('[view]', e); message(t('pubFailed'));
     });
   }
+
+  /* 23 Nov: a Vault dropdown in a public copy arrives as span[data-pv-select] with one .pv-opt per choice (data-pv when the
+     share holds that view, plain text when it does not): drawn again as a real dropdown; a choice opens its view */
+  function dropdowns(root) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-pv-select]'), function (box) {
+      var sel = document.createElement('select');
+      sel.className = 'vt-select'; sel.setAttribute('data-pv-sel', '');
+      if (box.getAttribute('data-label')) { sel.setAttribute('aria-label', box.getAttribute('data-label')); }
+      Array.prototype.forEach.call(box.querySelectorAll('.pv-opt'), function (o) {
+        var opt = document.createElement('option');
+        opt.value = o.getAttribute('data-pv') || ''; opt.textContent = o.textContent;
+        if (!opt.value) { opt.disabled = true; }
+        if (o.classList.contains('on')) { opt.selected = true; }
+        sel.appendChild(opt);
+      });
+      box.replaceWith(sel);
+    });
+  }
+  document.addEventListener('change', function (e) {
+    var sel = e.target && e.target.closest && e.target.closest('select[data-pv-sel]');
+    if (sel && sel.value && MAN) { go({ view: sel.value, ref: '' }, true); }
+  });
 
   /* ─── events ─── */
   document.addEventListener('click', function (e) {
