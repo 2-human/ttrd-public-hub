@@ -658,6 +658,7 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
 .vt-notebody ul,.vt-notebody ol{margin:0 0 6px;padding-left:20px}
 .vt-notebody li{margin:4px 0;line-height:1.5}
 .app-body .vt-tab.off{opacity:.5;border-style:dashed}
+.app-body .vt-select{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font:500 13px/1.2 var(--body);color:var(--ink);max-width:100%;min-width:260px;cursor:pointer}
 @media (max-width:600px){.app-body .vt-row{align-items:flex-start;flex-direction:column;gap:4px}.app-body .vt-lab{flex:none}}
 .app-body .vt-note{max-width:760px;margin:10px 0 0}
 .app-body .vt-meta{max-width:760px;margin:12px 0 0;padding:12px 16px;border:1px solid var(--line);border-radius:10px;display:grid;grid-template-columns:110px 1fr;gap:4px 12px;font-size:13px}
