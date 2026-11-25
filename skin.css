@@ -775,3 +775,8 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
   .tblw table.stack td[data-label=""]::before, .tblw table.stack td:empty { display: none; }
   .app-body .tblw { background: none; }
 }
+
+/* 25 Nov: links row in a vault email's meta (languages of a transactional email); a gap is marked */
+.vt-meta .vt-links a{display:inline-block;margin:0 6px 4px 0;padding:1px 8px;border:1px solid var(--line,#e4e1ea);border-radius:10px;text-decoration:none;font-size:12px}
+.vt-meta .vt-links a.gap{border-color:#b91c1c;color:#b91c1c;font-weight:600}
+.vt-meta .vt-links a.muted{opacity:.55}
