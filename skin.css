@@ -776,7 +776,19 @@ html[data-review-mode="on"] .app-nav{top:calc(var(--htop,50px) + 46px)}
   .app-body .tblw { background: none; }
 }
 
-/* 25 Nov: links row in a vault email's meta (languages of a transactional email); a gap is marked */
-.vt-meta .vt-links a{display:inline-block;margin:0 6px 4px 0;padding:1px 8px;border:1px solid var(--line,#e4e1ea);border-radius:10px;text-decoration:none;font-size:12px}
-.vt-meta .vt-links a.gap{border-color:#b91c1c;color:#b91c1c;font-weight:600}
-.vt-meta .vt-links a.muted{opacity:.55}
+/* 25 Nov: the language row on a transactional email (vault-view.js linksRow): the one viewed is filled; a gap is coloured
+   by level: amber = translation missing, red = missing on the platform (FXBO), solid red = both */
+.vt-meta .vt-links a{display:inline-block;margin:0 6px 6px 0;padding:2px 10px;border:1px solid var(--line,#e4e1ea);border-radius:12px;text-decoration:none;font-size:12px;color:var(--ink,#1f1e23)}
+.vt-meta .vt-links a.gap-tr{border-color:#b45309;color:#b45309;font-weight:600}
+.vt-meta .vt-links a.gap-crm{border-color:#b91c1c;color:#b91c1c;font-weight:600}
+.vt-meta .vt-links a.gap-both{border-color:#b91c1c;background:#b91c1c;color:#fff;font-weight:600}
+.vt-meta .vt-links a.gap-unk{opacity:.6}
+.vt-meta .vt-links a.cur{background:#c0187e;border-color:#c0187e;color:#fff;font-weight:700;box-shadow:0 0 0 2px #fff,0 0 0 4px #c0187e}
+.vt-meta .vt-links a.cur.gap-tr{background:#b45309;border-color:#b45309;box-shadow:0 0 0 2px #fff,0 0 0 4px #b45309}
+.vt-meta .vt-links a.cur.gap-crm,.vt-meta .vt-links a.cur.gap-both{background:#b91c1c;border-color:#b91c1c;box-shadow:0 0 0 2px #fff,0 0 0 4px #b91c1c}
+.vt-meta .vt-legend{display:block;margin-top:2px;font-size:11px;color:var(--muted,#6b6575)}
+.vt-meta .vt-legend span{margin-right:12px;white-space:nowrap}
+.vt-meta .vt-legend span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:4px;vertical-align:-1px;border:1px solid currentColor}
+.vt-meta .vt-legend .gap-tr:before{border-color:#b45309}
+.vt-meta .vt-legend .gap-crm:before{border-color:#b91c1c}
+.vt-meta .vt-legend .gap-both:before{background:#b91c1c;border-color:#b91c1c}
